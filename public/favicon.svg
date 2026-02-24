@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 烟花爆发 -->
+  <circle cx="32" cy="20" r="3" fill="#FF6B35"/>
+  <!-- 烟花轨迹 -->
+  <line x1="32" y1="20" x2="32" y2="8" stroke="#FFD700" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="20" x2="22" y2="10" stroke="#FF4081" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="20" x2="42" y2="10" stroke="#FF4081" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="20" x2="18" y2="18" stroke="#00E5FF" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="20" x2="46" y2="18" stroke="#00E5FF" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="20" x2="20" y2="26" stroke="#76FF03" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="20" x2="44" y2="26" stroke="#76FF03" stroke-width="2" stroke-linecap="round"/>
+  <!-- 火花点 -->
+  <circle cx="32" cy="7" r="1.5" fill="#FFD700"/>
+  <circle cx="21" cy="9" r="1.5" fill="#FF4081"/>
+  <circle cx="43" cy="9" r="1.5" fill="#FF4081"/>
+  <circle cx="17" cy="17" r="1.5" fill="#00E5FF"/>
+  <circle cx="47" cy="17" r="1.5" fill="#00E5FF"/>
+  <circle cx="19" cy="27" r="1.5" fill="#76FF03"/>
+  <circle cx="45" cy="27" r="1.5" fill="#76FF03"/>
+  <!-- 上升尾迹 -->
+  <line x1="32" y1="24" x2="32" y2="56" stroke="#FF6B35" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3,4"/>
+  <!-- 地面 -->
+  <line x1="16" y1="58" x2="48" y2="58" stroke="#555" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
