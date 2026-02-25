@@ -136,21 +136,21 @@ const defaultTypeProfiles: FireworkTypeProfile[] = [
 
 const DEFAULT_SHOW_SETTINGS: ShowControlSettings = {
   gravity: -9.8,
-  airResistance: 0.98,
-  dragVariation: 0.03,
-  velocityScale: 0.75,
-  burstHeightScale: 0.45,
+  airResistance: 0.985,        // slightly less drag for wider spread
+  dragVariation: 0.02,
+  velocityScale: 1.0,          // full velocity — no artificial reduction
+  burstHeightScale: 0.85,      // shells reach ~85% of configured height
   airBurstMin: 40,
   airBurstMax: 70,
   groundBurstMin: 6,
   groundBurstMax: 20,
-  shellDrag: 0.992,
+  shellDrag: 0.998,            // much less drag on ascending shell
   shellSize: 0.75,
   shellTrail: 0.98,
-  shellMinFlightTime: 0.6,
-  shellFallDistance: 2,
-  shellFallTime: 0.25,
-  burstFallFadeTime: 2,
+  shellMinFlightTime: 1.2,     // shells fly at least 1.2s before burst
+  shellFallDistance: 5,         // must fall 5m from apex before bursting
+  shellFallTime: 0.4,          // or 0.4s of falling
+  burstFallFadeTime: 3.0,      // longer visible burst trails
 };
 
 const ensureRackConfig = (template: RackTemplate): RackConfig => {

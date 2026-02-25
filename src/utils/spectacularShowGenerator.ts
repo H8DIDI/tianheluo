@@ -94,50 +94,50 @@ interface EffectPreset {
 }
 
 const PRESETS: Record<string, EffectPreset> = {
-  // 高空大牡丹 — 最壮观的球形效果
+  // 高空大牡丹 — 最壮观的球形效果，最高最大
   grandPeony: {
-    type: 'peony', height: 250, duration: 3.5, intensity: 1.0,
-    particleCount: 200, trailLength: 0.35, spread: 360,
+    type: 'peony', height: 200, duration: 3.5, intensity: 1.0,
+    particleCount: 250, trailLength: 0.4, spread: 360,
   },
-  // 标准牡丹
+  // 标准牡丹 — 中高空
   peony: {
-    type: 'peony', height: 160, duration: 2.5, intensity: 0.9,
-    particleCount: 140, trailLength: 0.3, spread: 360,
+    type: 'peony', height: 140, duration: 2.8, intensity: 0.9,
+    particleCount: 180, trailLength: 0.35, spread: 360,
   },
-  // 垂柳 — 长长的金色拖尾
+  // 垂柳 — 高空长拖尾，缓缓下垂
   willow: {
-    type: 'willow', height: 200, duration: 4.0, intensity: 0.85,
-    particleCount: 160, trailLength: 0.9, spread: 360,
+    type: 'willow', height: 170, duration: 4.5, intensity: 0.85,
+    particleCount: 200, trailLength: 0.92, spread: 360,
   },
-  // 菊花 — 细密球形，燃到最后
+  // 菊花 — 中高空细密球形
   chrysanthemum: {
-    type: 'chrysanthemum', height: 180, duration: 3.0, intensity: 0.95,
-    particleCount: 180, trailLength: 0.75, spread: 360,
+    type: 'chrysanthemum', height: 150, duration: 3.5, intensity: 0.95,
+    particleCount: 220, trailLength: 0.8, spread: 360,
   },
-  // 十字星 — 分裂效果
+  // 十字星 — 中空分裂
   crossette: {
-    type: 'crossette', height: 150, duration: 2.0, intensity: 0.9,
-    particleCount: 120, trailLength: 0.4, spread: 360,
+    type: 'crossette', height: 120, duration: 2.5, intensity: 0.9,
+    particleCount: 150, trailLength: 0.45, spread: 360,
   },
-  // 彗星 — 单颗大拖尾上升
+  // 彗星 — 大拖尾上升
   comet: {
-    type: 'comet', height: 180, duration: 3.0, intensity: 0.8,
-    particleCount: 80, trailLength: 0.85, spread: 120,
+    type: 'comet', height: 160, duration: 3.5, intensity: 0.85,
+    particleCount: 100, trailLength: 0.88, spread: 120,
   },
-  // 地雷 — 地面喷射
+  // 地雷 — 地面喷射，保持低
   mine: {
-    type: 'mine', height: 60, duration: 1.5, intensity: 1.0,
-    particleCount: 100, trailLength: 0.2, spread: 180,
+    type: 'mine', height: 40, duration: 1.5, intensity: 1.0,
+    particleCount: 120, trailLength: 0.2, spread: 180,
   },
-  // 低空爆裂 — 短平快
+  // 低空爆裂 — 丰富层次感
   lowBurst: {
-    type: 'burst', height: 80, duration: 1.5, intensity: 0.95,
-    particleCount: 100, trailLength: 0.25, spread: 360,
+    type: 'burst', height: 60, duration: 1.8, intensity: 0.95,
+    particleCount: 120, trailLength: 0.3, spread: 360,
   },
-  // 超高空爆裂 — finale 专用
+  // 超高空爆裂 — finale 专用，最高点
   skyBurst: {
-    type: 'burst', height: 300, duration: 3.0, intensity: 1.0,
-    particleCount: 220, trailLength: 0.4, spread: 360,
+    type: 'burst', height: 240, duration: 3.5, intensity: 1.0,
+    particleCount: 280, trailLength: 0.45, spread: 360,
   },
 };
 
