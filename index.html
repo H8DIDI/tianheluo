@@ -44,6 +44,55 @@
       }
     ]
     </script>
+    <!-- FAQ 结构化数据 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "萤合落是什么？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "萤合落（Yingheluo）是一款开源的专业烟花燃放控制与3D编排系统，基于React 19和Three.js构建，支持GPU粒子渲染、800管专业阵地布局、AI智能编排等功能。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "萤合落支持哪些烟花效果？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "支持10+种烟花效果：牡丹(Peony)、菊花(Chrysanthemum)、柳(Willow)、彗星(Comet)、十字星(Crossette)、地雷(Mine)、喷泉(Fountain)等。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "萤合落和浏阳花炮有什么关系？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "萤合落的设计灵感来源于湖南浏阳——世界烟花之乡。浏阳花炮产业年产值超500亿元，萤合落旨在为花炮产业提供数字化编排工具。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "萤合落可以免费使用吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "完全开源免费。直接访问 yingheluo.dpdns.org 即可使用，无需下载安装。源代码在GitHub开放。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "GPU粒子引擎有什么特点？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "使用自定义GLSL着色器实现GPU粒子系统，支持100000粒子实时渲染。颜色温度衰减模拟金属盐冷却发色过程，配合5级Mipmap Bloom后处理。"
+          }
+        }
+      ]
+    }
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>萤合落 — 专业烟花燃放控制与3D编排系统 | Fireworks Show Control</title>
