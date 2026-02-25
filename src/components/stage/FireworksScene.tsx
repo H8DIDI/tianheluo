@@ -17,9 +17,10 @@ import {
 } from '../../types/domain';
 import { specToSceneArray } from '../../planner/coordinate';
 import { createParticleSprite } from '../../utils/particleSprite';
+import GPUParticleSystem, { GPUParticleEmitter } from './GPUParticleSystem';
 import { deepAudioEngine } from '../../utils/deepAudioEngine';
 
-const PARTICLE_COUNT = 50000;
+const PARTICLE_COUNT = 500; // Reduced: only shells tracked on CPU now
 let GRAVITY = -9.8; // m/s²
 let AIR_RESISTANCE = 0.98;
 let DRAG_VARIATION = 0.03;
@@ -465,6 +466,7 @@ function buildCueSchedule(project: Project | null): ScheduledCue[] {
 
 export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
+  const gpuParticlesRef = useRef<GPUParticleEmitter>(null);
   const {
     project,
     currentTime,
@@ -647,9 +649,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
   ) => {
     ensureAudioInitialized();
     const particleCount = Math.max(10, Math.floor(effect.particleCount * effect.intensity));
-    let spawned = 0;
     const resolvedHangTime = Math.max(0.4, hangTime ?? effect.duration);
-    const hoverDuration = 1.5; // Hover before gravity kicks in
 
     // Generate multi-color scheme for this burst
     const colorScheme = generateColorScheme(effect.color);
@@ -657,84 +657,72 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
     // Play deep bass explosion sound
     deepAudioEngine.playDeepExplosion();
 
-    for (let i = 0; i < particles.current.length && spawned < particleCount; i++) {
-      const particle = particles.current[i];
-      if (particle.life <= 0) {
-        let angle: number;
-        let elevation: number;
-        let speed: number;
+    // Build GPU particle arrays
+    const velocities: Array<[number, number, number]> = [];
+    const colors: Array<[number, number, number]> = [];
+    const lifespans: number[] = [];
+    const sizes: number[] = [];
 
-        switch (effect.type) {
-          case 'peony':
-            angle = Math.random() * Math.PI * 2;
-            elevation = Math.acos(2 * Math.random() - 1) - Math.PI / 2;
-            speed = (10 + Math.random() * 18) * VELOCITY_SCALE;
-            particle.trailLength = effect.trailLength;
-            break;
-          case 'chrysanthemum':
-            angle = Math.random() * Math.PI * 2;
-            elevation = Math.acos(2 * Math.random() - 1) - Math.PI / 2;
-            speed = (11 + Math.random() * 19.8) * VELOCITY_SCALE; // 1.1x peony
-            particle.trailLength = effect.trailLength || 0.75;
-            particle.dragCoefficient = AIR_RESISTANCE * 0.85 + (Math.random() - 0.5) * DRAG_VARIATION; // less drag
-            particle.size = 0.2 + Math.random() * 0.35; // finer particles
-            break;
-          case 'willow':
-            angle = Math.random() * Math.PI * 2;
-            elevation = Math.random() * Math.PI * 0.3 + Math.PI * 0.1;
-            speed = (5 + Math.random() * 10) * VELOCITY_SCALE;
-            particle.trailLength = effect.trailLength || 0.9;
-            break;
-          case 'crossette':
-            const direction = Math.floor(Math.random() * 4);
-            angle = direction * (Math.PI / 2) + (Math.random() - 0.5) * 0.3;
-            elevation = (Math.random() - 0.5) * 0.4;
-            speed = (12 + Math.random() * 12) * VELOCITY_SCALE;
-            particle.trailLength = effect.trailLength;
-            particle.splitTime = effect.splitDelay ?? 0.5 + Math.random() * 0.3;
-            particle.hasSplit = false;
-            break;
-          default:
-            angle = Math.random() * Math.PI * 2;
-            elevation = Math.random() * Math.PI * 0.5;
-            speed = (10 + Math.random() * 16) * VELOCITY_SCALE;
-            particle.trailLength = effect.trailLength;
+    for (let i = 0; i < particleCount; i++) {
+      let angle: number;
+      let elevation: number;
+      let speed: number;
+
+      switch (effect.type) {
+        case 'peony':
+          angle = Math.random() * Math.PI * 2;
+          elevation = Math.acos(2 * Math.random() - 1) - Math.PI / 2;
+          speed = (10 + Math.random() * 18) * VELOCITY_SCALE;
+          break;
+        case 'chrysanthemum':
+          angle = Math.random() * Math.PI * 2;
+          elevation = Math.acos(2 * Math.random() - 1) - Math.PI / 2;
+          speed = (11 + Math.random() * 19.8) * VELOCITY_SCALE;
+          break;
+        case 'willow':
+          angle = Math.random() * Math.PI * 2;
+          elevation = Math.random() * Math.PI * 0.3 + Math.PI * 0.1;
+          speed = (5 + Math.random() * 10) * VELOCITY_SCALE;
+          break;
+        case 'crossette': {
+          const direction = Math.floor(Math.random() * 4);
+          angle = direction * (Math.PI / 2) + (Math.random() - 0.5) * 0.3;
+          elevation = (Math.random() - 0.5) * 0.4;
+          speed = (12 + Math.random() * 12) * VELOCITY_SCALE;
+          break;
         }
-
-        const vx = Math.cos(angle) * Math.cos(elevation) * speed;
-        const vyRaw = Math.sin(elevation) * speed;
-        const maxRiseHeight = HEIGHT_LIMIT - burstPos[1];
-        const maxVerticalSpeed = maxRiseHeight > 0
-          ? Math.sqrt(2 * Math.abs(GRAVITY) * maxRiseHeight)
-          : 0;
-        const vy = vyRaw > 0 ? Math.min(vyRaw, maxVerticalSpeed) : vyRaw;
-        const vz = Math.sin(angle) * Math.cos(elevation) * speed;
-
-        // Pick a color from the scheme and vary brightness
-        const targetColor = colorScheme[Math.floor(Math.random() * colorScheme.length)];
-        const brightness = 0.5 + Math.random() * 0.8;
-        const particleColor = targetColor.clone().multiplyScalar(brightness);
-
-        particle.position = [burstPos[0], burstPos[1], burstPos[2]];
-        particle.velocity = [vx, vy, vz];
-        particle.baseVelocity = [vx, vy, vz];
-        particle.color = '#' + particleColor.getHexString();
-        particle.baseColor = particleColor;
-        particle.life = 1;
-        particle.size = 0.3 + Math.random() * 0.5;
-        particle.type = effect.type;
-        particle.stage = 'burst';
-        particle.effect = effect.type === 'crossette' ? effect : undefined;
-        particle.apexY = undefined;
-        particle.fallTime = 0;
-        particle.scheduledBurstTime = undefined;
-        particle.hangTime = resolvedHangTime;
-        particle.hoverDuration = hoverDuration;
-        particle.age = 0;
-        particle.dragCoefficient = AIR_RESISTANCE + (Math.random() - 0.5) * DRAG_VARIATION;
-        particle.mass = 0.8 + Math.random() * 0.4;
-        spawned++;
+        default:
+          angle = Math.random() * Math.PI * 2;
+          elevation = Math.random() * Math.PI * 0.5;
+          speed = (10 + Math.random() * 16) * VELOCITY_SCALE;
       }
+
+      const vx = Math.cos(angle) * Math.cos(elevation) * speed;
+      const vyRaw = Math.sin(elevation) * speed;
+      const maxRiseHeight = HEIGHT_LIMIT - burstPos[1];
+      const maxVerticalSpeed = maxRiseHeight > 0
+        ? Math.sqrt(2 * Math.abs(GRAVITY) * maxRiseHeight)
+        : 0;
+      const vy = vyRaw > 0 ? Math.min(vyRaw, maxVerticalSpeed) : vyRaw;
+      const vz = Math.sin(angle) * Math.cos(elevation) * speed;
+
+      velocities.push([vx, vy, vz]);
+
+      const targetColor = colorScheme[Math.floor(Math.random() * colorScheme.length)];
+      const brightness = 0.5 + Math.random() * 0.8;
+      colors.push([
+        targetColor.r * brightness,
+        targetColor.g * brightness,
+        targetColor.b * brightness,
+      ]);
+
+      lifespans.push(resolvedHangTime);
+      sizes.push(effect.type === 'chrysanthemum' ? 3.0 + Math.random() * 4.0 : 4.0 + Math.random() * 6.0);
+    }
+
+    // Emit to GPU particle system
+    if (gpuParticlesRef.current) {
+      gpuParticlesRef.current.emit(burstPos, velocities, colors, lifespans, sizes);
     }
   };
 
@@ -859,43 +847,30 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
   };
 
   const spawnSplit = (particle: EnhancedParticle) => {
+    if (!gpuParticlesRef.current) return;
     const splitCount = 4;
-    let spawned = 0;
+    const velocities: Array<[number, number, number]> = [];
+    const colors: Array<[number, number, number]> = [];
+    const lifespans: number[] = [];
+    const sizes: number[] = [];
+    const pColor = new THREE.Color(particle.color);
 
-    for (let i = 0; i < particles.current.length && spawned < splitCount; i++) {
-      const newParticle = particles.current[i];
-      if (newParticle.life <= 0) {
-        const angle = spawned * (Math.PI / 2) + Math.random() * 0.2;
-        const speed = (6 + Math.random() * 4) * VELOCITY_SCALE;
-        const cappedVy = clampVerticalVelocity(
-          particle.position[1],
-          (Math.random() - 0.5) * 2
-        );
-
-        newParticle.position = [...particle.position];
-        newParticle.velocity = [
-          Math.cos(angle) * speed,
-          cappedVy,
-          Math.sin(angle) * speed,
-        ];
-        newParticle.baseVelocity = [...newParticle.velocity] as [number, number, number];
-        newParticle.color = particle.color;
-        newParticle.life = 0.8;
-        newParticle.size = 0.2 + Math.random() * 0.3;
-        newParticle.type = 'burst';
-        newParticle.stage = 'burst';
-        newParticle.effect = undefined;
-        newParticle.apexY = undefined;
-        newParticle.fallTime = 0;
-        newParticle.scheduledBurstTime = undefined;
-        newParticle.hangTime = particle.hangTime;
-        newParticle.age = 0;
-        newParticle.trailLength = 0.4;
-        newParticle.dragCoefficient = AIR_RESISTANCE + (Math.random() - 0.5) * DRAG_VARIATION;
-        newParticle.mass = 0.8 + Math.random() * 0.4;
-        spawned++;
-      }
+    for (let s = 0; s < splitCount; s++) {
+      const angle = s * (Math.PI / 2) + Math.random() * 0.2;
+      const speed = (6 + Math.random() * 4) * VELOCITY_SCALE;
+      const cappedVy = clampVerticalVelocity(
+        particle.position[1],
+        (Math.random() - 0.5) * 2
+      );
+      velocities.push([Math.cos(angle) * speed, cappedVy, Math.sin(angle) * speed]);
+      colors.push([pColor.r, pColor.g, pColor.b]);
+      lifespans.push(particle.hangTime ?? 1.5);
+      sizes.push(3.0 + Math.random() * 3.0);
     }
+    gpuParticlesRef.current.emit(
+      particle.position as [number, number, number],
+      velocities, colors, lifespans, sizes
+    );
   };
 
   // Animation loop
@@ -1258,6 +1233,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
 
   return (
     <>
+      <GPUParticleSystem ref={gpuParticlesRef} />
       <instancedMesh
         ref={meshRef}
         args={[undefined, undefined, PARTICLE_COUNT]}

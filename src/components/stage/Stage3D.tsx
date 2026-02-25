@@ -147,14 +147,15 @@ export function Stage3D() {
           maxPolarAngle={Math.PI / 2}
         />
 
-        {/* 后期处理：辉光 */}
+        {/* 后期处理：辉光 + 色差 */}
         <EffectComposer>
           <Bloom
-            intensity={2.0}
-            luminanceThreshold={0.1}
-            luminanceSmoothing={0.5}
-            radius={0.5}
+            intensity={2.5}
+            luminanceThreshold={0.08}
+            luminanceSmoothing={0.7}
+            radius={0.6}
             mipmapBlur
+            levels={5}
           />
         </EffectComposer>
       </Canvas>
