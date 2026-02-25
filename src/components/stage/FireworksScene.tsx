@@ -958,21 +958,22 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
       if (particle.stage === 'shell') {
         // Realistic shell ballistics: quadratic drag + gravity
         const shellDrag = particle.dragCoefficient;
-        const shellMass = particle.mass;
+        // const shellMass = particle.mass;
         const shellSpeed = Math.sqrt(
           particle.velocity[0] ** 2 + particle.velocity[1] ** 2 + particle.velocity[2] ** 2
         );
 
         if (shellSpeed > 0.01) {
-          // F_drag = -c * |v|^2 * v_hat / m
-          const dragAccel = (shellDrag * shellSpeed) / shellMass;
-          particle.velocity[0] -= dragAccel * particle.velocity[0] * clampedDelta;
-          particle.velocity[1] -= dragAccel * particle.velocity[1] * clampedDelta;
-          particle.velocity[2] -= dragAccel * particle.velocity[2] * clampedDelta;
+          // Exponential drag: v *= drag^dt  (drag ~0.998 per 1/60s)
+          // Convert to continuous: factor = drag^(dt*60)
+          const dragFactor = Math.pow(shellDrag, clampedDelta * 60);
+          particle.velocity[0] *= dragFactor;
+          particle.velocity[1] *= dragFactor;
+          particle.velocity[2] *= dragFactor;
         }
 
         // Gravity (GRAVITY is negative)
-        particle.velocity[1] += (GRAVITY / shellMass) * clampedDelta;
+        particle.velocity[1] += GRAVITY * clampedDelta;
 
         // Light wind effect on shell
         particle.velocity[0] += 0.15 * clampedDelta;
@@ -1059,21 +1060,21 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
 
       // Realistic burst particle physics: quadratic drag + gravity
       const burstDrag = particle.dragCoefficient;
-      const burstMass = particle.mass;
+      // const burstMass = particle.mass;
       const burstSpeed = Math.sqrt(
         particle.velocity[0] ** 2 + particle.velocity[1] ** 2 + particle.velocity[2] ** 2
       );
 
       if (burstSpeed > 0.01) {
-        const dragAccel = (burstDrag * burstSpeed) / burstMass;
-        particle.velocity[0] -= dragAccel * particle.velocity[0] * clampedDelta;
-        particle.velocity[1] -= dragAccel * particle.velocity[1] * clampedDelta;
-        particle.velocity[2] -= dragAccel * particle.velocity[2] * clampedDelta;
+        // Exponential drag matching GPU shader model
+        const dragFactor = Math.pow(burstDrag, clampedDelta * 60);
+        particle.velocity[0] *= dragFactor;
+        particle.velocity[1] *= dragFactor;
+        particle.velocity[2] *= dragFactor;
       }
 
-      // Gravity - always applied, no hover hack
-      const burstGravityEffect = (GRAVITY / burstMass) * clampedDelta;
-      particle.velocity[1] += burstGravityEffect;
+      // Gravity
+      particle.velocity[1] += GRAVITY * clampedDelta;
 
       // Wind effect
       particle.velocity[0] += 0.3 * clampedDelta;
