@@ -877,6 +877,12 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
   useFrame((_, delta) => {
     if (!meshRef.current || !project) return;
 
+    // Sync physics params to GPU particle system
+    if (gpuParticlesRef.current) {
+      gpuParticlesRef.current.setGravity(GRAVITY);
+      gpuParticlesRef.current.setDrag(AIR_RESISTANCE);
+    }
+
     const clampedDelta = Math.min(delta, 0.05);
     const windowStart = currentTime;
     let windowEnd = currentTime;

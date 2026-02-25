@@ -15,7 +15,6 @@ export interface GPUParticleEmitter {
     lifespans: number[],
     sizes: number[]
   ) => void;
-  /** Emit a single shell particle and return its index for CPU tracking */
   emitShell: (
     origin: [number, number, number],
     velocity: [number, number, number],
@@ -23,10 +22,10 @@ export interface GPUParticleEmitter {
     lifespan: number,
     size: number
   ) => number;
-  /** Kill a particle by index (set lifespan to 0) */
   kill: (index: number) => void;
-  /** Get current GPU time */
   getTime: () => number;
+  setGravity: (g: number) => void;
+  setDrag: (d: number) => void;
 }
 
 const GPUParticleSystem = forwardRef<GPUParticleEmitter>((_, ref) => {
@@ -40,7 +39,6 @@ const GPUParticleSystem = forwardRef<GPUParticleEmitter>((_, ref) => {
   const { geometry, material } = useMemo(() => {
     const geo = new THREE.BufferGeometry();
 
-    // Pre-allocate all buffers
     const positions = new Float32Array(MAX_PARTICLES * 3);
     const velocities = new Float32Array(MAX_PARTICLES * 3);
     const colors = new Float32Array(MAX_PARTICLES * 3);
@@ -48,7 +46,6 @@ const GPUParticleSystem = forwardRef<GPUParticleEmitter>((_, ref) => {
     const lifespans = new Float32Array(MAX_PARTICLES);
     const sizes = new Float32Array(MAX_PARTICLES);
 
-    // Initialize: all particles born in the past with 0 lifespan = dead
     bornTimes.fill(-9999);
     lifespans.fill(0);
 
@@ -59,7 +56,6 @@ const GPUParticleSystem = forwardRef<GPUParticleEmitter>((_, ref) => {
     geo.setAttribute('aLifespan', new THREE.BufferAttribute(lifespans, 1));
     geo.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
 
-    // Disable bounding sphere computation (particles are everywhere)
     geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 10000);
 
     const mat = new THREE.ShaderMaterial({
@@ -154,12 +150,19 @@ const GPUParticleSystem = forwardRef<GPUParticleEmitter>((_, ref) => {
     getTime() {
       return timeRef.current;
     },
+
+    setGravity(g: number) {
+      material.uniforms.uGravity.value = g;
+    },
+
+    setDrag(d: number) {
+      material.uniforms.uDrag.value = d;
+    },
   }));
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
     timeRef.current += dt;
-
     if (material.uniforms) {
       material.uniforms.uTime.value = timeRef.current;
     }
