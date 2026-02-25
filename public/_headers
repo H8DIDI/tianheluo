@@ -1,0 +1,8 @@
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# 防止被 iframe 嵌入到垃圾站
+/*.html
+  Content-Security-Policy: frame-ancestors 'self'
