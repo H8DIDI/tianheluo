@@ -4,7 +4,6 @@ import { GripVertical, Pause, Play, RotateCcw, Sparkles } from 'lucide-react';
 import { useProjectStore } from '../../store/projectStore';
 import { useLibraryStore } from '../../store/libraryStore';
 import { ShowEvent, FiringPattern, FireworkType } from '../../types/domain';
-import { useTimelinePlayback } from './timelinePlayback';
 
 export function Timeline() {
   const {
@@ -55,8 +54,6 @@ export function Timeline() {
   const [handleDragging, setHandleDragging] = useState<{ id: string; offset: number } | null>(null);
   const formatTime = (value: number) =>
     `${Math.floor(value / 60)}:${String(Math.floor(value % 60)).padStart(2, '0')}`;
-
-  useTimelinePlayback({ currentTime, duration, isPlaying, setCurrentTime, setIsPlaying });
 
   useEffect(() => {
     if (effects.length === 0) return;
