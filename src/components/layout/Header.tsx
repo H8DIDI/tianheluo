@@ -18,9 +18,10 @@ interface HeaderProps {
   onOpenManager?: () => void;
   onOpenAdmin?: () => void;
   onOpenAssistant?: () => void;
+  mobile?: boolean;
 }
 
-export function Header({ onOpenManager, onOpenAdmin, onOpenAssistant }: HeaderProps) {
+export function Header({ onOpenManager, onOpenAdmin, onOpenAssistant, mobile = false }: HeaderProps) {
   const { project, isPlaying, setIsPlaying, currentTime, setCurrentTime, requestReplay, refillTubes } =
     useProjectStore(
       useShallow((state) => ({
@@ -82,15 +83,18 @@ export function Header({ onOpenManager, onOpenAdmin, onOpenAssistant }: HeaderPr
   };
 
   return (
-    <header className="min-h-[56px] flex-shrink-0 bg-app-bg border-b border-panel-border flex items-center justify-between px-4">
-      <div className="flex items-center gap-4 min-w-0 overflow-hidden">
-        <h1 className="text-xl font-bold text-text-main tracking-tight truncate">萤合落 V1.0</h1>
-        <span className="text-sm text-text-secondary px-3 py-1 bg-panel-bg rounded border border-panel-border">
+    <header className={`flex-shrink-0 bg-app-bg border-b border-panel-border flex items-center justify-between gap-3 ${mobile ? 'px-3 py-2' : 'min-h-[56px] px-4'}`}>
+      <div className="flex items-center gap-3 min-w-0 overflow-hidden">
+        <div className="min-w-0">
+          <h1 className={`${mobile ? 'text-base' : 'text-xl'} font-bold text-text-main tracking-tight truncate`}>萤合落 V1.0</h1>
+          {mobile && <div className="text-[11px] text-text-secondary truncate">手机预演模式</div>}
+        </div>
+        <span className={`${mobile ? 'hidden' : 'inline-flex'} text-sm text-text-secondary px-3 py-1 bg-panel-bg rounded border border-panel-border`}>
           {project?.name || '未命名项目'}
         </span>
       </div>
 
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className={`flex items-center flex-shrink-0 ${mobile ? 'gap-1.5' : 'gap-2'}`}>
         <button
           onClick={handleReset}
           className="p-2 hover:bg-panel-border rounded transition-all"
@@ -120,13 +124,13 @@ export function Header({ onOpenManager, onOpenAdmin, onOpenAssistant }: HeaderPr
             <Play size={18} className="text-text-secondary hover:text-text-main transition-colors" />
           )}
         </button>
-        <div className="ml-4 text-sm font-mono text-text-main px-3 py-1.5 bg-panel-bg rounded border border-panel-border">
+        <div className={`${mobile ? '' : 'ml-4'} text-sm font-mono text-text-main px-3 py-1.5 bg-panel-bg rounded border border-panel-border`}>
           {timeLabel}
         </div>
       </div>
 
-      <div className="flex items-center gap-2 flex-shrink-0">
-        {onOpenManager && (
+      <div className={`flex items-center flex-shrink-0 ${mobile ? 'gap-1' : 'gap-2'}`}>
+        {!mobile && onOpenManager && (
           <button
             className="p-2 hover:bg-panel-border rounded transition-all"
             title="烟花管理"
@@ -135,7 +139,7 @@ export function Header({ onOpenManager, onOpenAdmin, onOpenAssistant }: HeaderPr
             <Settings size={18} className="text-text-secondary hover:text-text-main transition-colors" />
           </button>
         )}
-        {onOpenAssistant && (
+        {!mobile && onOpenAssistant && (
           <button
             className="p-2 hover:bg-panel-border rounded transition-all"
             title="AI 助理"
@@ -144,7 +148,7 @@ export function Header({ onOpenManager, onOpenAdmin, onOpenAssistant }: HeaderPr
             <Bot size={18} className="text-text-secondary hover:text-text-main transition-colors" />
           </button>
         )}
-        {onOpenAdmin && (
+        {!mobile && onOpenAdmin && (
           <button
             className="p-2 hover:bg-panel-border rounded transition-all"
             title="后台管理"
@@ -160,11 +164,17 @@ export function Header({ onOpenManager, onOpenAdmin, onOpenAssistant }: HeaderPr
           className={`p-2 rounded transition-all ${
             isExporting
               ? 'bg-primary/50 cursor-not-allowed'
-              : 'bg-primary hover:bg-primary-hover shadow-glow'
+              : mobile
+                ? 'bg-panel-bg hover:bg-panel-border'
+                : 'bg-primary hover:bg-primary-hover shadow-glow'
           }`}
           title="导出施工单"
         >
-          {isExporting ? <Loader2 size={18} className="animate-spin text-white" /> : <FileDown size={18} className="text-white" />}
+          {isExporting ? (
+            <Loader2 size={18} className={`animate-spin ${mobile ? 'text-text-main' : 'text-white'}`} />
+          ) : (
+            <FileDown size={18} className={mobile ? 'text-text-main' : 'text-white'} />
+          )}
         </button>
       </div>
     </header>

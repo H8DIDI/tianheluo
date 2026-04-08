@@ -1,4 +1,5 @@
 import { Project } from '../types';
+import { syncProjectCueCompatibility } from '../utils/cueCompatibility';
 
 export interface HealthStatus {
   ok: boolean;
@@ -41,7 +42,7 @@ function toDate(value: string | Date | undefined) {
 }
 
 function normalizeProject(project: Project): Project {
-  return {
+  return syncProjectCueCompatibility({
     ...project,
     positions: project.positions ?? [],
     events: project.events ?? [],
@@ -49,7 +50,7 @@ function normalizeProject(project: Project): Project {
     cueList: project.cueList ?? [],
     createdAt: toDate(project.createdAt as unknown as string | Date),
     updatedAt: toDate(project.updatedAt as unknown as string | Date),
-  };
+  });
 }
 
 async function requestJson<T>(path: string, options?: RequestInit): Promise<T> {

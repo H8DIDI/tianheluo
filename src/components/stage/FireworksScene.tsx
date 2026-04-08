@@ -19,6 +19,12 @@ import { specToSceneArray } from '../../planner/coordinate';
 import { createParticleSprite } from '../../utils/particleSprite';
 import GPUParticleSystem, { GPUParticleEmitter } from './GPUParticleSystem';
 import { deepAudioEngine } from '../../utils/deepAudioEngine';
+import {
+  shouldTriggerScheduledItem,
+  updateCueShellParticle,
+  type PendingExplosion,
+} from './stagePlayback';
+import { playScheduledEventFire } from './stageEventPlayback';
 
 const PARTICLE_COUNT = 500; // Reduced: only shells tracked on CPU now
 let GRAVITY = -9.8; // m/s²
@@ -66,6 +72,7 @@ interface EnhancedParticle extends Particle {
   hangTime?: number;
   hoverDuration?: number;
   baseColor?: THREE.Color;
+  launchPosition?: [number, number, number];
 }
 
 
@@ -526,33 +533,40 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
   const firingSchedule = useMemo(() => buildFiringSchedule(project), [project]);
   const cueSchedule = useMemo(() => buildCueSchedule(project), [project]);
   const useCueSchedule = cueSchedule.length > 0;
+  const playbackMode = useCueSchedule ? 'cue' : 'event';
 
-  const findPositionAndRack = (positionId: string, rackId: string) => {
-    if (!project) return { position: undefined, rack: undefined };
-    const position = project.positions.find((pos) => pos.id === positionId);
-    if (!position) return { position: undefined, rack: undefined };
-    const rack = position.racks.find((item) => item.id === rackId);
-    return { position, rack };
-  };
+  const resetSceneState = () => {
+    if (!meshRef.current) return;
 
-  const selectAvailableTube = (rack: Rack, preferredIndex: number) => {
-    const count = rack.tubes.length;
-    if (count === 0) return undefined;
-    const normalizedIndex = ((preferredIndex % count) + count) % count;
-    for (let offset = 0; offset < count; offset++) {
-      const idx = (normalizedIndex + offset) % count;
-      const candidate = rack.tubes[idx];
-      if (
-        candidate &&
-        candidate.loaded &&
-        candidate.effect &&
-        !candidate.isFired &&
-        !firedTubes.current.has(candidate.id)
-      ) {
-        return candidate;
-      }
+    firedEvents.current.clear();
+    firedTubes.current.clear();
+    ammoWarningLogged.current = false;
+    lastTimeRef.current = 0;
+
+    particles.current.forEach((particle, index) => {
+      particle.life = 0;
+      particle.age = 0;
+      particle.position = [0, -100, 0];
+      particle.velocity = [0, 0, 0];
+      particle.baseVelocity = [0, 0, 0];
+      particle.effect = undefined;
+      particle.stage = 'burst';
+      particle.apexY = undefined;
+      particle.fallTime = undefined;
+      particle.scheduledBurstTime = undefined;
+      particle.hangTime = undefined;
+      particle.launchPosition = undefined;
+
+      dummy.position.set(0, -100, 0);
+      dummy.scale.setScalar(0);
+      dummy.updateMatrix();
+      meshRef.current!.setMatrixAt(index, dummy.matrix);
+    });
+
+    meshRef.current.instanceMatrix.needsUpdate = true;
+    if (meshRef.current.instanceColor) {
+      meshRef.current.instanceColor.needsUpdate = true;
     }
-    return undefined;
   };
 
   const reportAmmoExhausted = () => {
@@ -581,6 +595,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
       fallTime: undefined,
       scheduledBurstTime: undefined,
       hangTime: undefined,
+      launchPosition: undefined,
     }));
   }, []);
 
@@ -596,32 +611,22 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
   }, [project]);
 
   useEffect(() => {
-    if (!meshRef.current) return;
+    resetSceneState();
+    setCurrentTime(0);
+  }, [project, playbackMode, setCurrentTime]);
+
+  useEffect(() => {
     if (replayToken === lastReplayRef.current) return;
     lastReplayRef.current = replayToken;
-    firedEvents.current.clear();
-    firedTubes.current.clear();
-    ammoWarningLogged.current = false;
-    lastTimeRef.current = 0;
-
-    particles.current.forEach((particle, index) => {
-      particle.life = 0;
-      particle.age = 0;
-      particle.position = [0, -100, 0];
-      particle.velocity = [0, 0, 0];
-      particle.effect = undefined;
-      particle.stage = 'burst';
-      dummy.position.set(0, -100, 0);
-      dummy.scale.setScalar(0);
-      dummy.updateMatrix();
-      meshRef.current!.setMatrixAt(index, dummy.matrix);
-    });
-    meshRef.current.instanceMatrix.needsUpdate = true;
-
+    resetSceneState();
     setCurrentTime(0);
   }, [replayToken, setCurrentTime]);
 
   useEffect(() => {
+    if (playbackMode !== 'event') {
+      firedTubes.current = new Set();
+      return;
+    }
     const next = new Set<string>();
     project?.positions.forEach((position) => {
       position.racks.forEach((rack) => {
@@ -633,7 +638,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
       });
     });
     firedTubes.current = next;
-  }, [project]);
+  }, [playbackMode, project]);
 
   useEffect(() => {
     if (currentTime < lastTimeRef.current) {
@@ -765,6 +770,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
         particle.fallTime = 0;
         particle.scheduledBurstTime = undefined;
         particle.hangTime = undefined;
+        particle.launchPosition = [launchX, launchY, launchZ];
         break;
       }
     }
@@ -810,6 +816,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
         particle.fallTime = 0;
         particle.scheduledBurstTime = burstDelay;
         particle.hangTime = hangTime;
+        particle.launchPosition = [launchX, launchY, launchZ];
         break;
       }
     }
@@ -904,8 +911,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
     activeSchedule.forEach((item) => {
       if (
         !firedEvents.current.has(item.key) &&
-        item.time <= windowEnd + 1e-4 &&
-        item.time >= windowStart
+        shouldTriggerScheduledItem(item.time, windowStart, windowEnd)
       ) {
         firedEvents.current.add(item.key);
         if (useCueSchedule) {
@@ -919,29 +925,20 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
           );
         } else {
           const fireItem = item as ScheduledFire;
-          const { position, rack } = findPositionAndRack(fireItem.positionId, fireItem.rackId);
-          if (!position || !rack) return;
-          const candidateTube = selectAvailableTube(rack, fireItem.tubeIndex);
-          if (!candidateTube) {
-            reportAmmoExhausted();
-            return;
-          }
-          if (firedTubes.current.has(candidateTube.id)) return;
-          const effectToLaunch = candidateTube.effect;
-          if (!effectToLaunch) return;
-          const transform = getTubeTransform(position, rack, candidateTube);
-          firedTubes.current.add(candidateTube.id);
-          fireTube(position.id, rack.id, candidateTube.index);
-          spawnFireworkFromTube(transform.position, transform.direction, effectToLaunch);
+          playScheduledEventFire({
+            fireItem,
+            positions: project.positions,
+            firedTubeIds: firedTubes.current,
+            findTransform: getTubeTransform,
+            fireTube,
+            spawnFireworkFromTube,
+            reportAmmoExhausted,
+          });
         }
       }
     });
 
-    const pendingExplosions: Array<{
-      position: [number, number, number];
-      effect: FireworkEffect;
-      hangTime?: number;
-    }> = [];
+    const pendingExplosions: PendingExplosion[] = [];
 
     // Update particles with physics
     particles.current.forEach((particle, i) => {
@@ -975,13 +972,22 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
         // Gravity (GRAVITY is negative)
         particle.velocity[1] += GRAVITY * clampedDelta;
 
-        // Light wind effect on shell
-        particle.velocity[0] += 0.15 * clampedDelta;
-        particle.velocity[2] += 0.08 * clampedDelta;
+        if (particle.scheduledBurstTime !== undefined) {
+          const pending = updateCueShellParticle(particle, GRAVITY, (shellParticle) => {
+            clampHeightPosition(shellParticle as EnhancedParticle);
+          });
+          if (pending) {
+            pendingExplosions.push(pending);
+          }
+        } else {
+          // Light wind effect on non-planned shells only
+          particle.velocity[0] += 0.15 * clampedDelta;
+          particle.velocity[2] += 0.08 * clampedDelta;
 
-        particle.position[0] += particle.velocity[0] * clampedDelta;
-        particle.position[1] += particle.velocity[1] * clampedDelta;
-        particle.position[2] += particle.velocity[2] * clampedDelta;
+          particle.position[0] += particle.velocity[0] * clampedDelta;
+          particle.position[1] += particle.velocity[1] * clampedDelta;
+          particle.position[2] += particle.velocity[2] * clampedDelta;
+        }
         clampHeightPosition(particle);
 
         const previousApex = particle.apexY ?? particle.position[1];
@@ -998,14 +1004,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
 
         let shouldExplode = false;
         if (particle.effect && particle.scheduledBurstTime !== undefined) {
-          if (particle.age >= particle.scheduledBurstTime) {
-            pendingExplosions.push({
-              position: [...particle.position] as [number, number, number],
-              effect: particle.effect,
-              hangTime: particle.hangTime,
-            });
-            shouldExplode = true;
-          }
+          shouldExplode = particle.age >= particle.scheduledBurstTime;
         } else if (
           particle.effect &&
           particle.age >= SHELL_MIN_FLIGHT_TIME &&
@@ -1024,6 +1023,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
           particle.apexY = undefined;
           particle.fallTime = undefined;
           particle.scheduledBurstTime = undefined;
+          particle.launchPosition = undefined;
 
           dummy.position.set(0, -100, 0);
           dummy.scale.setScalar(0);

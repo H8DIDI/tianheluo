@@ -1,6 +1,7 @@
 import * as htmlToImage from 'html-to-image';
 import jsPDF from 'jspdf';
 import { Project } from '../types';
+import { syncProjectCueCompatibility } from '../utils/cueCompatibility';
 
 /**
  * Format date to YYYYMMDDHHmm
@@ -104,19 +105,20 @@ function addFullPageImage(pdf: jsPDF, dataUrl: string) {
  * @param project - Project to export
  */
 export async function exportToPDF(project: Project): Promise<void> {
+  const normalizedProject = syncProjectCueCompatibility(project);
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 15;
   let yPosition = margin;
-  const sortedCues = (project.cues || []).slice().sort((a, b) => a.startTime - b.startTime);
+  const sortedCues = (normalizedProject.cues || []).slice().sort((a, b) => a.startTime - b.startTime);
   await ensureChineseFont(pdf);
   pdf.setFont(FONT_NAME, 'normal');
 
   // Title
   pdf.setFontSize(24);
   pdf.setFont(FONT_NAME, 'normal');
-  pdf.text(project.name, margin, yPosition);
+  pdf.text(normalizedProject.name, margin, yPosition);
   yPosition += 10;
 
   // Metadata
@@ -125,18 +127,18 @@ export async function exportToPDF(project: Project): Promise<void> {
   pdf.setTextColor(100);
   pdf.text(`生成时间: ${new Date().toLocaleString()}`, margin, yPosition);
   yPosition += 5;
-  pdf.text(`总时长: ${Math.floor(project.duration / 60)}:${String(project.duration % 60).padStart(2, '0')}`, margin, yPosition);
+  pdf.text(`总时长: ${Math.floor(normalizedProject.duration / 60)}:${String(normalizedProject.duration % 60).padStart(2, '0')}`, margin, yPosition);
   yPosition += 5;
-  pdf.text(`烟花数: ${(project.cues || []).length}`, margin, yPosition);
+  pdf.text(`烟花数: ${(normalizedProject.cues || []).length}`, margin, yPosition);
   yPosition += 5;
 
-  if (project.activityName) {
-    pdf.text(`活动名称: ${project.activityName}`, margin, yPosition);
+  if (normalizedProject.activityName) {
+    pdf.text(`活动名称: ${normalizedProject.activityName}`, margin, yPosition);
     yPosition += 5;
   }
 
-  if (project.activityDetail) {
-    const detailLines = pdf.splitTextToSize(`活动详情: ${project.activityDetail}`, pageWidth - 2 * margin);
+  if (normalizedProject.activityDetail) {
+    const detailLines = pdf.splitTextToSize(`活动详情: ${normalizedProject.activityDetail}`, pageWidth - 2 * margin);
     pdf.text(detailLines, margin, yPosition);
     yPosition += detailLines.length * 5;
   }
@@ -306,7 +308,7 @@ export async function exportToPDF(project: Project): Promise<void> {
   }
 
   // Save PDF with format: ProjectName_YYYYMMDDHHmm.pdf
-  const sanitizedName = project.name.replace(/[<>:"/\\|?*]/g, '_').trim() || 'firework_show';
+  const sanitizedName = normalizedProject.name.replace(/[<>:"/\\|?*]/g, '_').trim() || 'firework_show';
   const timestamp = formatDateTime(new Date());
   const filename = `${sanitizedName}_${timestamp}.pdf`;
   pdf.save(filename);
@@ -336,8 +338,9 @@ export function exportToJSON(project: Project): void {
  * @param project - Project to export
  */
 export function exportToCSV(project: Project): void {
+  const normalizedProject = syncProjectCueCompatibility(project);
   const headers = ['#', 'Name', 'Effect', 'Type', 'Track', 'Start Time', 'Duration', 'X', 'Y', 'Z', 'Color', 'Intensity'];
-  const rows = (project.cues || [])
+  const rows = (normalizedProject.cues || [])
     .sort((a, b) => a.startTime - b.startTime)
     .map((cue, index) => [
       index + 1,
@@ -360,7 +363,7 @@ export function exportToCSV(project: Project): void {
 
   const link = document.createElement('a');
   link.href = url;
-  const sanitizedName = project.name.replace(/[<>:"/\\|?*]/g, '_').trim() || 'firework_show';
+  const sanitizedName = normalizedProject.name.replace(/[<>:"/\\|?*]/g, '_').trim() || 'firework_show';
   const timestamp = formatDateTime(new Date());
   link.download = `${sanitizedName}_${timestamp}.csv`;
   link.click();

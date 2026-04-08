@@ -11,9 +11,9 @@ import {
   MatrixRackConfig,
 } from '../types/domain';
 import { generateEpicShow } from '../utils/showGenerator';
-import { generateSymmetricShow } from '../utils/symmetricShowGenerator';
 import { generateGrandShow } from '../utils/grandShowGenerator';
 import { generateSpectacularShow } from '../utils/spectacularShowGenerator';
+import { syncProjectCueCompatibility } from '../utils/cueCompatibility';
 
 interface ProjectState {
   project: Project | null;
@@ -87,6 +87,8 @@ const pushHistory = (history: Project[], project: Project | null) => {
   const next = [...history, project];
   return next.length > MAX_HISTORY ? next.slice(next.length - MAX_HISTORY) : next;
 };
+
+const normalizeProject = (project: Project) => syncProjectCueCompatibility(project);
 
 /** Create a tube with physical properties */
 function createTube(index: number, angle: number, tilt: number): Tube {
@@ -261,21 +263,22 @@ export const useProjectStore = create<ProjectState>((set) => ({
   updateCue: (id, updates) =>
     set((state) => {
       if (!state.project) return state;
+      const project = normalizeProject({
+        ...state.project,
+        events: state.project.events.map((evt) =>
+          evt.id === id ? { ...evt, ...updates } : evt
+        ),
+        updatedAt: new Date(),
+      });
       return {
-        project: {
-          ...state.project,
-          events: state.project.events.map((evt) =>
-            evt.id === id ? { ...evt, ...updates } : evt
-          ),
-          updatedAt: new Date(),
-        },
+        project,
         history: pushHistory(state.history, state.project),
       };
     }),
 
   setProject: (project) =>
     set((state) => ({
-      project,
+      project: normalizeProject(project),
       history: pushHistory(state.history, state.project),
       replayToken: 0,
     })),
@@ -283,15 +286,20 @@ export const useProjectStore = create<ProjectState>((set) => ({
   updateProject: (updates) =>
     set((state) => {
       if (!state.project) return state;
+      const project = normalizeProject({
+        ...state.project,
+        ...updates,
+        updatedAt: new Date(),
+      });
       return {
-        project: { ...state.project, ...updates, updatedAt: new Date() },
+        project,
         history: pushHistory(state.history, state.project),
       };
     }),
 
   loadDemoProject: () =>
     set((state) => ({
-      project: createDemoProject(),
+      project: normalizeProject(createDemoProject()),
       history: pushHistory(state.history, state.project),
       selectedPosition: null,
       selectedRack: null,
@@ -304,7 +312,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
 
   loadEpicShow: () =>
     set((state) => ({
-      project: generateEpicShow(),
+      project: normalizeProject(generateEpicShow()),
       history: pushHistory(state.history, state.project),
       selectedPosition: null,
       selectedRack: null,
@@ -317,7 +325,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
 
   loadGrandShow: () =>
     set((state) => ({
-      project: generateSymmetricShow(),
+      project: normalizeProject(generateGrandShow()),
       history: pushHistory(state.history, state.project),
       selectedPosition: null,
       selectedRack: null,
@@ -330,7 +338,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
 
   loadSpectacularShow: () => {
     try {
-      const project = generateSpectacularShow();
+      const project = normalizeProject(generateSpectacularShow());
       set((state) => ({
         project,
         history: pushHistory(state.history, state.project),
@@ -350,7 +358,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
 
   createNewProject: () =>
     set((state) => ({
-      project: createEmptyProject(),
+      project: normalizeProject(createEmptyProject()),
       history: pushHistory(state.history, state.project),
       selectedPosition: null,
       selectedRack: null,
@@ -364,7 +372,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
   undo: () =>
     set((state) => {
       if (state.history.length === 0) return state;
-      const previous = state.history[state.history.length - 1];
+      const previous = normalizeProject(state.history[state.history.length - 1]);
       const history = state.history.slice(0, -1);
       const selectedPosition = state.selectedPosition
         ? previous.positions.find((pos) => pos.id === state.selectedPosition?.id) ?? null
@@ -677,4 +685,3 @@ export const useProjectStore = create<ProjectState>((set) => ({
   setIsPlaying: (isPlaying) => set({ isPlaying }),
   requestReplay: () => set((state) => ({ replayToken: state.replayToken + 1 })),
 }));
-

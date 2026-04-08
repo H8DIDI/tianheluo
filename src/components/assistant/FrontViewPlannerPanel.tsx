@@ -5,12 +5,16 @@ import { useShallow } from 'zustand/shallow';
 import { useProjectStore } from '../../store/projectStore';
 import { buildCueExport, parseCueExport, planChoreography } from '../../planner';
 import { DEMO_FRONT_VIEW_INPUT } from '../../planner/demoSpec';
+import { deriveLegacyCuesFromCueList } from '../../utils/cueCompatibility';
 
 export function FrontViewPlannerPanel() {
-  const { project, setProject } = useProjectStore(
+  const { project, setProject, setCurrentTime, setIsPlaying, requestReplay } = useProjectStore(
     useShallow((state) => ({
       project: state.project,
       setProject: state.setProject,
+      setCurrentTime: state.setCurrentTime,
+      setIsPlaying: state.setIsPlaying,
+      requestReplay: state.requestReplay,
     }))
   );
 
@@ -54,10 +58,14 @@ export function FrontViewPlannerPanel() {
     );
     setProject({
       ...project,
+      cues: deriveLegacyCuesFromCueList(cues),
       cueList: cues,
       duration: Math.max(project.duration, maxCueTime + 0.5),
       updatedAt: new Date(),
     });
+    setCurrentTime(0);
+    setIsPlaying(false);
+    requestReplay();
   };
 
   const handleDownload = () => {
