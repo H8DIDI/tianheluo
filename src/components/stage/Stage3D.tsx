@@ -200,10 +200,10 @@ export function Stage3D() {
         {/* 后期处理：辉光 + 色差 */}
         <EffectComposer>
           <Bloom
-            intensity={2.5}
-            luminanceThreshold={0.08}
-            luminanceSmoothing={0.7}
-            radius={0.6}
+            intensity={3.4}
+            luminanceThreshold={0.03}
+            luminanceSmoothing={0.82}
+            radius={0.72}
             mipmapBlur
             levels={5}
           />

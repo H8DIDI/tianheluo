@@ -38,7 +38,7 @@ const PARTICLE_COUNT = 500; // Reduced: only shells tracked on CPU now
 let GRAVITY = -9.8; // m/s²
 let AIR_RESISTANCE = 0.98;
 let DRAG_VARIATION = 0.03;
-const TUBE_LAUNCH_HEIGHT = 1.5;
+const TUBE_LAUNCH_HEIGHT = 1.8;
 const TUBE_RENDER_SCALE = 3;
 const TUBE_RENDER_HEIGHT = TUBE_LAUNCH_HEIGHT * TUBE_RENDER_SCALE;
 const TUBE_RADIUS = 0.08 * TUBE_RENDER_SCALE;
@@ -50,8 +50,8 @@ let GROUND_BURST_MIN = 6;
 let GROUND_BURST_MAX = 20;
 let VELOCITY_SCALE = 0.75;
 let SHELL_DRAG = 0.992;
-let SHELL_SIZE = 0.75;
-let SHELL_TRAIL = 0.98;
+let SHELL_SIZE = 1.2;
+let SHELL_TRAIL = 1.25;
 let SHELL_MIN_FLIGHT_TIME = 0.6;
 let SHELL_FALL_DISTANCE = 2;
 let SHELL_FALL_TIME = 0.25;
@@ -598,7 +598,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
         particle.baseVelocity = [vx, vy, vz];
         particle.color = effect.color;
         particle.life = 1;
-        particle.size = SHELL_SIZE + Math.random() * 0.15;
+        particle.size = SHELL_SIZE + Math.random() * 0.35;
         particle.type = 'rocket';
         particle.stage = 'shell';
         particle.trailLength = Math.max(SHELL_TRAIL, effect.trailLength);
@@ -644,7 +644,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
         particle.baseVelocity = [...cappedVelocity];
         particle.color = effect.color;
         particle.life = 1;
-        particle.size = effect.type === 'comet' ? SHELL_SIZE * 0.9 : effect.type === 'willow' ? SHELL_SIZE * 1.15 : SHELL_SIZE;
+        particle.size = effect.type === 'comet' ? SHELL_SIZE * 1.05 : effect.type === 'willow' ? SHELL_SIZE * 1.35 : SHELL_SIZE * 1.15;
         particle.type = 'rocket';
         particle.stage = 'shell';
         particle.trailLength = Math.max(SHELL_TRAIL, effect.trailLength);

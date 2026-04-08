@@ -9,12 +9,12 @@ export type ParticleMaterialConfig = {
 
 export function getParticleMaterialConfig(): ParticleMaterialConfig {
   return {
-    pointScale: 250,
-    coreBoost: 2.6,
-    flashBoost: 3.8,
-    glowFalloff: 7.5,
-    coreFalloff: 46,
-    coolingStrength: 0.52,
+    pointScale: 320,
+    coreBoost: 3.6,
+    flashBoost: 5.8,
+    glowFalloff: 6.2,
+    coreFalloff: 34,
+    coolingStrength: 0.46,
   };
 }
 
