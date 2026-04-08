@@ -103,6 +103,22 @@ const pushHistory = (history: Project[], project: Project | null) => {
 
 const normalizeProject = (project: Project) => syncProjectCueCompatibility(project);
 
+const resetProjectTubePlaybackState = (project: Project): Project => ({
+  ...project,
+  positions: project.positions.map((pos) => ({
+    ...pos,
+    racks: pos.racks.map((rack) => ({
+      ...rack,
+      tubes: rack.tubes.map((tube) => ({
+        ...tube,
+        loaded: !!tube.effect,
+        isFired: false,
+      })),
+    })),
+  })),
+  updatedAt: new Date(),
+});
+
 /** Create a tube with physical properties */
 function createTube(index: number, angle: number, tilt: number): Tube {
   return {
@@ -584,23 +600,8 @@ export const useProjectStore = create<ProjectState>((set) => ({
   refillTubes: () =>
     set((state) => {
       if (!state.project) return state;
-      const nextPositions = state.project.positions.map((pos) => ({
-        ...pos,
-        racks: pos.racks.map((rack) => ({
-          ...rack,
-          tubes: rack.tubes.map((tube) => ({
-            ...tube,
-            loaded: !!tube.effect,
-            isFired: false,
-          })),
-        })),
-      }));
       return {
-        project: {
-          ...state.project,
-          positions: nextPositions,
-          updatedAt: new Date(),
-        },
+        project: resetProjectTubePlaybackState(state.project),
         history: pushHistory(state.history, state.project),
       };
     }),
@@ -702,9 +703,18 @@ export const useProjectStore = create<ProjectState>((set) => ({
   togglePlayback: () =>
     set((state) => ({ isPlaying: !state.isPlaying })),
   resetPlayback: () =>
-    set(() => ({ currentTime: 0, isPlaying: false })),
+    set((state) => ({
+      currentTime: 0,
+      isPlaying: false,
+      project: state.project ? resetProjectTubePlaybackState(state.project) : state.project,
+    })),
   replayShow: () =>
-    set((state) => ({ currentTime: 0, isPlaying: true, replayToken: state.replayToken + 1 })),
+    set((state) => ({
+      currentTime: 0,
+      isPlaying: true,
+      replayToken: state.replayToken + 1,
+      project: state.project ? resetProjectTubePlaybackState(state.project) : state.project,
+    })),
   requestReplay: () => set((state) => ({ replayToken: state.replayToken + 1 })),
   requestQuickLaunch: ({ world, source }) =>
     set((state) => ({
