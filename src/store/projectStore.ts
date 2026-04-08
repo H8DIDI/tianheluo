@@ -26,6 +26,7 @@ interface ProjectState {
   isPlaying: boolean;
   replayToken: number;
   quickLaunchQueue: QuickLaunchRequest[];
+  quickLaunchMode: 'preset' | 'library';
   quickLaunchPreset: QuickLaunchPreset;
   quickLaunchCustomLabel: string;
   history: Project[];
@@ -71,8 +72,9 @@ interface ProjectState {
   resetPlayback: () => void;
   replayShow: () => void;
   requestReplay: () => void;
-  requestQuickLaunch: (payload: { world: [number, number, number]; source: QuickLaunchSource }) => void;
+  requestQuickLaunch: (payload: { world: [number, number, number]; source: QuickLaunchSource; selectedEffectId?: string }) => void;
   enqueueQuickLaunches: (requests: QuickLaunchRequest[]) => void;
+  setQuickLaunchMode: (mode: 'preset' | 'library') => void;
   setQuickLaunchPreset: (preset: QuickLaunchPreset) => void;
   setQuickLaunchCustomLabel: (label: string) => void;
   shiftQuickLaunch: () => void;
@@ -285,6 +287,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
   isPlaying: true,
   replayToken: 0,
   quickLaunchQueue: [],
+  quickLaunchMode: 'preset',
   quickLaunchPreset: 'peony',
   quickLaunchCustomLabel: 'YHL',
   history: [],
@@ -716,15 +719,16 @@ export const useProjectStore = create<ProjectState>((set) => ({
       project: state.project ? resetProjectTubePlaybackState(state.project) : state.project,
     })),
   requestReplay: () => set((state) => ({ replayToken: state.replayToken + 1 })),
-  requestQuickLaunch: ({ world, source }) =>
+  requestQuickLaunch: ({ world, source, selectedEffectId }) =>
     set((state) => ({
       quickLaunchQueue: [
         ...state.quickLaunchQueue,
-        createQuickLaunchRequest(world, source, state.quickLaunchPreset, state.quickLaunchCustomLabel),
+        createQuickLaunchRequest(world, source, state.quickLaunchPreset, state.quickLaunchCustomLabel, selectedEffectId),
       ],
     })),
   enqueueQuickLaunches: (requests) =>
     set((state) => ({ quickLaunchQueue: [...state.quickLaunchQueue, ...requests] })),
+  setQuickLaunchMode: (mode) => set({ quickLaunchMode: mode }),
   setQuickLaunchPreset: (preset) => set({ quickLaunchPreset: preset }),
   setQuickLaunchCustomLabel: (label) => set({ quickLaunchCustomLabel: label }),
   shiftQuickLaunch: () =>

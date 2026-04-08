@@ -5,9 +5,11 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { useProjectStore } from '../../store/projectStore';
+import { useLibraryStore } from '../../store/libraryStore';
 import { Project } from '../../types/domain';
 import { FireworksScene } from './FireworksScene';
 import { getQuickLaunchWorldPoint } from './quickLaunch';
+import { resolveStageTapLaunchMode } from './stageLaunchSelection';
 
 type StageCubeSpec = {
   center: [number, number, number];
@@ -58,7 +60,10 @@ export function Stage3D() {
   const [showStageCube, setShowStageCube] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const project = useProjectStore((state) => state.project);
+  const quickLaunchMode = useProjectStore((state) => state.quickLaunchMode);
+  const quickLaunchPreset = useProjectStore((state) => state.quickLaunchPreset);
   const requestQuickLaunch = useProjectStore((state) => state.requestQuickLaunch);
+  const selectedEffect = useLibraryStore((state) => state.selectedEffect);
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 768px)');
@@ -97,6 +102,17 @@ export function Stage3D() {
       event.point.y,
       event.point.z,
     ]);
+    const launchMode = resolveStageTapLaunchMode({
+      quickLaunchMode,
+      selectedEffectId: selectedEffect?.id ?? null,
+      quickLaunchPreset,
+    });
+
+    if (launchMode.mode === 'library') {
+      requestQuickLaunch({ world, source: 'stage-tap', selectedEffectId: launchMode.selectedEffectId });
+      return;
+    }
+
     requestQuickLaunch({ world, source: 'stage-tap' });
   };
 

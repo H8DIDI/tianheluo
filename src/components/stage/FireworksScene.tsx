@@ -3,6 +3,7 @@ import { useShallow } from 'zustand/shallow';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useProjectStore } from '../../store/projectStore';
+import { useLibraryStore } from '../../store/libraryStore';
 import { useManagerStore } from '../../store/managerStore';
 import {
   Particle,
@@ -278,6 +279,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
   const showSettings = useManagerStore(
     useShallow((state) => state.showSettings)
   );
+  const libraryEffects = useLibraryStore((state) => state.effects);
 
   GRAVITY = showSettings.gravity;
   AIR_RESISTANCE = showSettings.airResistance;
@@ -549,12 +551,19 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
   };
 
   const spawnQuickLaunch = (request: QuickLaunchRequest) => {
-    const effect = buildQuickLaunchEffect(request.preset, `quick-${request.id}`, request.customLabel);
+    const libraryEffect = request.selectedEffectId
+      ? libraryEffects.find((effect) => effect.id === request.selectedEffectId) ?? null
+      : null;
+    const effect = libraryEffect
+      ? { ...libraryEffect, id: `quick-${request.id}-${libraryEffect.id}` }
+      : buildQuickLaunchEffect(request.preset, `quick-${request.id}`, request.customLabel);
     const launchPos = getQuickLaunchLaunchPoint(request.world);
     const profile = getQuickLaunchBurstProfile(request.preset);
-    const burstHeight = profile.burstHeight;
+    const burstHeight = libraryEffect
+      ? clampBurstHeight(effect.height * BURST_HEIGHT_SCALE, false)
+      : profile.burstHeight;
     const burstPos: [number, number, number] = [request.world[0], burstHeight, request.world[2]];
-    const burstDelay = profile.burstDelay;
+    const burstDelay = libraryEffect ? Math.max(1.1, Math.min(1.7, effect.duration * 0.55)) : profile.burstDelay;
     const velocity: [number, number, number] = [
       (burstPos[0] - launchPos[0]) / burstDelay,
       (burstPos[1] - launchPos[1] - 0.5 * GRAVITY * burstDelay * burstDelay) / burstDelay,

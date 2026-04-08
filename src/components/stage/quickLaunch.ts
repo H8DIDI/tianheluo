@@ -22,6 +22,7 @@ export type QuickLaunchRequest = {
   source: QuickLaunchSource;
   preset: QuickLaunchPreset;
   customLabel?: string;
+  selectedEffectId?: string;
 };
 
 export type QuickLaunchEffect = {
@@ -119,7 +120,8 @@ export function createQuickLaunchRequest(
   world: [number, number, number],
   source: QuickLaunchSource,
   preset: QuickLaunchPreset = 'peony',
-  customLabel?: string
+  customLabel?: string,
+  selectedEffectId?: string
 ): QuickLaunchRequest {
   return {
     id: `quick-launch-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -127,6 +129,7 @@ export function createQuickLaunchRequest(
     source,
     preset,
     customLabel: preset === 'text-custom' ? buildQuickLaunchTextLabel(customLabel ?? '') : undefined,
+    selectedEffectId,
   };
 }
 
