@@ -78,7 +78,7 @@ export function QuickLaunchBar({ compact = false }: QuickLaunchBarProps) {
           </>
         ) : (
           <div className="flex flex-wrap gap-2 max-w-full">
-            {effects.slice(0, compact ? 5 : 8).map((effect) => {
+            {effects.slice(0, compact ? 6 : 12).map((effect) => {
               const selected = selectedEffect?.id === effect.id;
               return (
                 <button

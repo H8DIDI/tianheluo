@@ -480,7 +480,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
           ]);
 
         const targetColor = colorScheme[Math.floor(Math.random() * colorScheme.length)];
-        const brightness = 0.7 + Math.random() * 0.5;
+        const brightness = 0.95 + Math.random() * 0.7;
         colors.push([
           targetColor.r * brightness,
           targetColor.g * brightness,
@@ -488,7 +488,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
         ]);
 
         lifespans.push(resolvedHangTime);
-        sizes.push((effect.burstLabel ? 3.8 : 4.2) + Math.random() * 2.5);
+        sizes.push((effect.burstLabel ? 5.2 : 5.8) + Math.random() * 3.4);
         continue;
       }
 
@@ -533,7 +533,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
       velocities.push([vx, vy, vz]);
 
       const targetColor = colorScheme[Math.floor(Math.random() * colorScheme.length)];
-      const brightness = 0.5 + Math.random() * 0.8;
+      const brightness = 0.72 + Math.random() * 1.05;
       colors.push([
         targetColor.r * brightness,
         targetColor.g * brightness,
@@ -541,7 +541,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
       ]);
 
       lifespans.push(resolvedHangTime);
-      sizes.push(effect.type === 'chrysanthemum' ? 3.0 + Math.random() * 4.0 : 4.0 + Math.random() * 6.0);
+      sizes.push(effect.type === 'chrysanthemum' ? 4.0 + Math.random() * 5.0 : 5.2 + Math.random() * 7.4);
     }
 
     // Emit to GPU particle system
