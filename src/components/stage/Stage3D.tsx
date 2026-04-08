@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, ThreeEvent } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
@@ -7,6 +7,7 @@ import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { useProjectStore } from '../../store/projectStore';
 import { Project } from '../../types/domain';
 import { FireworksScene } from './FireworksScene';
+import { getQuickLaunchWorldPoint } from './quickLaunch';
 
 type StageCubeSpec = {
   center: [number, number, number];
@@ -56,6 +57,7 @@ export function Stage3D() {
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
   const [showStageCube, setShowStageCube] = useState(true);
   const project = useProjectStore((state) => state.project);
+  const requestQuickLaunch = useProjectStore((state) => state.requestQuickLaunch);
   const stageCube = useMemo(
     () => getStageCubeSpec(project),
     [project]
@@ -77,6 +79,15 @@ export function Stage3D() {
     controls.object.position.set(...bestViewPosition);
     controls.update();
     controls.saveState();
+  };
+
+  const handleStageTap = (event: ThreeEvent<PointerEvent>) => {
+    const world = getQuickLaunchWorldPoint([
+      event.point.x,
+      event.point.y,
+      event.point.z,
+    ]);
+    requestQuickLaunch({ world, source: 'stage-tap' });
   };
 
   return (
@@ -133,7 +144,18 @@ export function Stage3D() {
           infiniteGrid={false}
         />
 
-        <StageCube visible={showStageCube} spec={stageCube} />
+        <group onClick={handleStageTap}>
+          <mesh
+            rotation={[-Math.PI / 2, 0, 0]}
+            position={[0, project?.groundHeight ?? 0, 0]}
+            visible={false}
+          >
+            <planeGeometry args={[stageCube.size, stageCube.size]} />
+            <meshBasicMaterial transparent opacity={0} />
+          </mesh>
+
+          <StageCube visible={showStageCube} spec={stageCube} />
+        </group>
 
         {/* 烟花场景 */}
         <FireworksScene heightLimit={heightLimit} />

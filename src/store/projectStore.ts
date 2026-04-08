@@ -14,6 +14,8 @@ import { generateEpicShow } from '../utils/showGenerator';
 import { generateGrandShow } from '../utils/grandShowGenerator';
 import { generateSpectacularShow } from '../utils/spectacularShowGenerator';
 import { syncProjectCueCompatibility } from '../utils/cueCompatibility';
+import type { QuickLaunchRequest, QuickLaunchSource } from '../components/stage/quickLaunch';
+import { createQuickLaunchRequest } from '../components/stage/quickLaunch';
 
 interface ProjectState {
   project: Project | null;
@@ -23,6 +25,7 @@ interface ProjectState {
   currentTime: number;
   isPlaying: boolean;
   replayToken: number;
+  quickLaunchRequest: QuickLaunchRequest | null;
   history: Project[];
 
   // Actions
@@ -63,6 +66,8 @@ interface ProjectState {
   setCurrentTime: (time: number) => void;
   setIsPlaying: (isPlaying: boolean) => void;
   requestReplay: () => void;
+  requestQuickLaunch: (payload: { world: [number, number, number]; source: QuickLaunchSource }) => void;
+  clearQuickLaunch: (id: string) => void;
 
   // Legacy compatibility
   selectedCue: ShowEvent | null;
@@ -255,6 +260,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
   currentTime: 0,
   isPlaying: true,
   replayToken: 0,
+  quickLaunchRequest: null,
   history: [],
 
   // Legacy compatibility
@@ -684,4 +690,11 @@ export const useProjectStore = create<ProjectState>((set) => ({
 
   setIsPlaying: (isPlaying) => set({ isPlaying }),
   requestReplay: () => set((state) => ({ replayToken: state.replayToken + 1 })),
+  requestQuickLaunch: ({ world, source }) =>
+    set({ quickLaunchRequest: createQuickLaunchRequest(world, source) }),
+  clearQuickLaunch: (id) =>
+    set((state) => ({
+      quickLaunchRequest:
+        state.quickLaunchRequest?.id === id ? null : state.quickLaunchRequest,
+    })),
 }));
