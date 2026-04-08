@@ -1,15 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Bot, Map, Sparkles, Timer, Wand2, Zap } from 'lucide-react';
+import { Bot, Map, Sparkles, Timer } from 'lucide-react';
 import { Header } from './Header';
+import { QuickLaunchBar } from './QuickLaunchBar';
 import { MapEditor } from '../map/MapEditor';
 import { Stage3D } from '../stage/Stage3D';
 import { Timeline } from '../timeline/Timeline';
-import { useProjectStore } from '../../store/projectStore';
-import {
-  createQuickLaunchFinaleRequests,
-  createQuickLaunchRandomShowRequests,
-  createQuickLaunchSalvoRequests,
-} from '../stage/quickLaunch';
 import {
   getMobileWorkbenchSheetTitle,
   getMobileWorkbenchTabs,
@@ -25,11 +20,6 @@ interface MainWorkbenchProps {
 export function MainWorkbench({ onOpenManager, onOpenAdmin, onOpenAssistant }: MainWorkbenchProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [activeMobilePanel, setActiveMobilePanel] = useState<MobileWorkbenchPanel>('stage');
-  const quickLaunchPreset = useProjectStore((state) => state.quickLaunchPreset);
-  const quickLaunchCustomLabel = useProjectStore((state) => state.quickLaunchCustomLabel);
-  const setQuickLaunchPreset = useProjectStore((state) => state.setQuickLaunchPreset);
-  const setQuickLaunchCustomLabel = useProjectStore((state) => state.setQuickLaunchCustomLabel);
-  const enqueueQuickLaunches = useProjectStore((state) => state.enqueueQuickLaunches);
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 768px)');
@@ -56,61 +46,8 @@ export function MainWorkbench({ onOpenManager, onOpenAdmin, onOpenAssistant }: M
           <div className="absolute inset-0">
             <Stage3D />
             <div className="absolute inset-x-0 bottom-0 p-3 pb-20 pointer-events-none">
-              <div className="pointer-events-auto rounded-2xl border border-panel-border bg-app-bg/88 backdrop-blur-md shadow-glow px-3 py-2 flex flex-col gap-2">
-                <div className="min-w-0">
-                  <div className="text-sm font-semibold text-text-main truncate">烟花舞台</div>
-                  <div className="text-[11px] text-text-secondary truncate">
-                    点舞台直接放烟花，先玩起来，再进编排
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <select
-                    value={quickLaunchPreset}
-                    onChange={(event) => setQuickLaunchPreset(event.target.value as typeof quickLaunchPreset)}
-                    className="h-9 flex-1 min-w-0 rounded-xl border border-panel-border bg-panel-bg px-2 text-sm text-text-main"
-                  >
-                    <option value="peony">牡丹</option>
-                    <option value="willow">垂柳</option>
-                    <option value="comet">彗星</option>
-                    <option value="ring">圆环</option>
-                    <option value="heart">爱心</option>
-                    <option value="star">星形</option>
-                    <option value="diamond">钻石</option>
-                    <option value="butterfly">蝴蝶</option>
-                    <option value="text-love">LOVE</option>
-                    <option value="text-520">520</option>
-                    <option value="text-custom">自定义文字</option>
-                  </select>
-                  {quickLaunchPreset === 'text-custom' && (
-                    <input
-                      value={quickLaunchCustomLabel}
-                      onChange={(event) => setQuickLaunchCustomLabel(event.target.value.toUpperCase().slice(0, 4))}
-                      placeholder="输入4位内文字"
-                      className="h-9 w-[108px] rounded-xl border border-panel-border bg-panel-bg px-2 text-sm text-text-main"
-                    />
-                  )}
-                  <button
-                    className="h-9 rounded-xl border border-panel-border bg-panel-bg px-3 text-sm text-text-main inline-flex items-center gap-1.5 flex-shrink-0"
-                    onClick={() => enqueueQuickLaunches(createQuickLaunchSalvoRequests([0, 0, -8], quickLaunchPreset, quickLaunchCustomLabel))}
-                    title="一键齐射"
-                  >
-                    <Zap size={15} /> 齐射
-                  </button>
-                  <button
-                    className="h-9 rounded-xl border border-panel-border bg-panel-bg px-3 text-sm text-text-main inline-flex items-center gap-1.5 flex-shrink-0"
-                    onClick={() => enqueueQuickLaunches(createQuickLaunchRandomShowRequests(quickLaunchPreset, quickLaunchCustomLabel))}
-                    title="随机秀"
-                  >
-                    <Wand2 size={15} /> 随机秀
-                  </button>
-                  <button
-                    className="h-9 rounded-xl border border-panel-border bg-panel-bg px-3 text-sm text-text-main inline-flex items-center gap-1.5 flex-shrink-0"
-                    onClick={() => enqueueQuickLaunches(createQuickLaunchFinaleRequests([0, 0, -8]))}
-                    title="终场秀"
-                  >
-                    <Sparkles size={15} /> 终场秀
-                  </button>
-                </div>
+              <div className="pointer-events-auto">
+                <QuickLaunchBar compact />
               </div>
             </div>
           </div>
@@ -201,6 +138,9 @@ export function MainWorkbench({ onOpenManager, onOpenAdmin, onOpenAssistant }: M
         onOpenAssistant={onOpenAssistant}
       />
       <div className="flex-1 overflow-hidden flex flex-col">
+        <div className="px-4 pt-4 pb-2 border-b border-panel-border/70 bg-app-bg/70">
+          <QuickLaunchBar />
+        </div>
         <div className="flex flex-1 overflow-hidden">
           <div className="w-[32%] min-w-[280px] border-r border-panel-border">
             <MapEditor />
