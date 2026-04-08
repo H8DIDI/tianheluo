@@ -750,8 +750,9 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
   const spawnQuickLaunch = (request: QuickLaunchRequest) => {
     const effect = buildQuickLaunchEffect(request.preset, `quick-${request.id}`);
     const launchPos = getQuickLaunchLaunchPoint(request.world);
-    const burstPos: [number, number, number] = [request.world[0], 24, request.world[2]];
-    const burstDelay = 1.15;
+    const burstHeight = request.preset === 'willow' ? 30 : request.preset === 'comet' ? 18 : 24;
+    const burstPos: [number, number, number] = [request.world[0], burstHeight, request.world[2]];
+    const burstDelay = request.preset === 'comet' ? 0.8 : request.preset === 'willow' ? 1.35 : 1.15;
     const velocity: [number, number, number] = [
       (burstPos[0] - launchPos[0]) / burstDelay,
       (burstPos[1] - launchPos[1] - 0.5 * GRAVITY * burstDelay * burstDelay) / burstDelay,
@@ -789,7 +790,7 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
         particle.size = SHELL_SIZE + Math.random() * 0.15;
         particle.type = 'rocket';
         particle.stage = 'shell';
-        particle.trailLength = SHELL_TRAIL;
+        particle.trailLength = Math.max(SHELL_TRAIL, effect.trailLength);
         particle.age = 0;
         particle.splitTime = undefined;
         particle.hasSplit = undefined;
@@ -832,10 +833,10 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
         particle.baseVelocity = [...cappedVelocity];
         particle.color = effect.color;
         particle.life = 1;
-        particle.size = SHELL_SIZE;
+        particle.size = effect.type === 'comet' ? SHELL_SIZE * 0.9 : effect.type === 'willow' ? SHELL_SIZE * 1.15 : SHELL_SIZE;
         particle.type = 'rocket';
         particle.stage = 'shell';
-        particle.trailLength = SHELL_TRAIL;
+        particle.trailLength = Math.max(SHELL_TRAIL, effect.trailLength);
         particle.age = 0;
         particle.splitTime = undefined;
         particle.hasSplit = undefined;
@@ -1068,7 +1069,8 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
         meshRef.current!.setMatrixAt(i, dummy.matrix);
 
         tempColor.set(particle.color);
-        meshRef.current!.setColorAt(i, tempColor.multiplyScalar(SHELL_BRIGHTNESS));
+        const shellGlow = particle.effect?.type === 'comet' ? SHELL_BRIGHTNESS * 1.4 : particle.effect?.type === 'willow' ? SHELL_BRIGHTNESS * 1.15 : SHELL_BRIGHTNESS;
+        meshRef.current!.setColorAt(i, tempColor.multiplyScalar(shellGlow));
         return;
       }
 
@@ -1137,14 +1139,14 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
         // Flash: extra bright, mix with white
         const flash = (life - 0.8) / 0.2;
         tempColor.lerp(new THREE.Color(1, 1, 1), flash * 0.4);
-        brightness = 1.2;
+        brightness = particle.type === 'willow' ? 1.4 : 1.2;
       } else if (life > 0.3) {
-        brightness = 0.5 + life * 0.7;
+        brightness = particle.type === 'comet' ? 0.75 + life * 0.85 : 0.5 + life * 0.7;
       } else {
         // Cooling: shift red, dim
         const cool = 1 - life / 0.3;
         tempColor.lerp(new THREE.Color(0.8, 0.2, 0.05), cool * 0.4);
-        brightness = life / 0.3 * 0.4;
+        brightness = particle.type === 'willow' ? life / 0.3 * 0.55 : life / 0.3 * 0.4;
       }
       const trailFade = Math.pow(life, 1 - (0.3 + particle.trailLength * 0.7));
       meshRef.current!.setColorAt(i, tempColor.multiplyScalar(brightness * trailFade));

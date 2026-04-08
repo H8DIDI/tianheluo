@@ -44,6 +44,9 @@ test('buildQuickLaunchEffect maps presets to distinct firework effects', () => {
   assert.equal(willow.type, 'willow');
   assert.equal(comet.type, 'comet');
   assert.ok(peony.particleCount !== willow.particleCount);
+  assert.ok(willow.trailLength > peony.trailLength);
+  assert.ok(comet.spread < peony.spread);
+  assert.ok(willow.duration > comet.duration);
 });
 
 test('getQuickLaunchLaunchPoint offsets burst launch behind target', () => {
