@@ -39,6 +39,12 @@ export type QuickLaunchEffect = {
   burstLabel?: string;
 };
 
+export type QuickLaunchBurstProfile = {
+  launchOffsetZ: number;
+  burstHeight: number;
+  burstDelay: number;
+};
+
 const QUICK_LAUNCH_PRESET_COLORS: Record<QuickLaunchPreset, string[]> = {
   peony: ['#F59E0B', '#EF4444', '#FDE047'],
   willow: ['#FDE68A', '#FBBF24', '#F59E0B'],
@@ -64,13 +70,13 @@ const BURST_PRESET_CONFIG: Record<
     burstPattern: BurstPatternId;
   }
 > = {
-  ring: { name: 'Quick Ring', height: 90, duration: 1.9, particleCount: 140, trailLength: 0.55, burstPattern: 'ring' },
-  heart: { name: 'Quick Heart', height: 95, duration: 2.2, particleCount: 180, trailLength: 0.6, burstPattern: 'heart' },
-  star: { name: 'Quick Star', height: 96, duration: 2, particleCount: 160, trailLength: 0.58, burstPattern: 'star' },
-  diamond: { name: 'Quick Diamond', height: 98, duration: 2.05, particleCount: 180, trailLength: 0.58, burstPattern: 'diamond' },
-  butterfly: { name: 'Quick Butterfly', height: 104, duration: 2.3, particleCount: 220, trailLength: 0.64, burstPattern: 'butterfly' },
-  'text-love': { name: 'Quick LOVE', height: 102, duration: 2.4, particleCount: 240, trailLength: 0.62, burstPattern: 'text-love' },
-  'text-520': { name: 'Quick 520', height: 100, duration: 2.3, particleCount: 220, trailLength: 0.6, burstPattern: 'text-520' },
+  ring: { name: 'Quick Ring', height: 132, duration: 2.35, particleCount: 260, trailLength: 0.66, burstPattern: 'ring' },
+  heart: { name: 'Quick Heart', height: 138, duration: 2.6, particleCount: 300, trailLength: 0.7, burstPattern: 'heart' },
+  star: { name: 'Quick Star', height: 136, duration: 2.45, particleCount: 280, trailLength: 0.68, burstPattern: 'star' },
+  diamond: { name: 'Quick Diamond', height: 140, duration: 2.5, particleCount: 300, trailLength: 0.7, burstPattern: 'diamond' },
+  butterfly: { name: 'Quick Butterfly', height: 146, duration: 2.8, particleCount: 340, trailLength: 0.76, burstPattern: 'butterfly' },
+  'text-love': { name: 'Quick LOVE', height: 142, duration: 2.8, particleCount: 340, trailLength: 0.74, burstPattern: 'text-love' },
+  'text-520': { name: 'Quick 520', height: 140, duration: 2.7, particleCount: 320, trailLength: 0.72, burstPattern: 'text-520' },
 };
 
 export function buildQuickLaunchTextLabel(value: string) {
@@ -91,7 +97,22 @@ export function getQuickLaunchWorldPoint(point: [number, number, number]): [numb
 }
 
 export function getQuickLaunchLaunchPoint(point: [number, number, number]): [number, number, number] {
-  return [point[0], 0, point[2] - 30];
+  return [point[0], 0, point[2] - 42];
+}
+
+export function getQuickLaunchBurstProfile(preset: QuickLaunchPreset): QuickLaunchBurstProfile {
+  switch (preset) {
+    case 'willow':
+      return { launchOffsetZ: 42, burstHeight: 42, burstDelay: 1.55 };
+    case 'comet':
+      return { launchOffsetZ: 38, burstHeight: 32, burstDelay: 1.05 };
+    case 'text-love':
+    case 'text-520':
+    case 'text-custom':
+      return { launchOffsetZ: 42, burstHeight: 38, burstDelay: 1.35 };
+    default:
+      return { launchOffsetZ: 42, burstHeight: 34, burstDelay: 1.2 };
+  }
 }
 
 export function createQuickLaunchRequest(
@@ -124,12 +145,12 @@ export function buildQuickLaunchEffect(
       name: `Quick ${burstLabel}`,
       type: 'burst',
       color,
-      height: 104,
-      duration: 2.4,
+      height: 138,
+      duration: 2.8,
       intensity: 1,
-      particleCount: 260,
+      particleCount: 320,
       spread: 360,
-      trailLength: 0.62,
+      trailLength: 0.68,
       burstPattern: 'text-custom',
       burstLabel,
     };
@@ -141,12 +162,12 @@ export function buildQuickLaunchEffect(
       name: 'Quick Willow',
       type: 'willow',
       color,
-      height: 110,
-      duration: 2.6,
+      height: 152,
+      duration: 3.4,
       intensity: 1,
-      particleCount: 240,
+      particleCount: 320,
       spread: 360,
-      trailLength: 0.9,
+      trailLength: 1.1,
     };
   }
 
@@ -156,12 +177,12 @@ export function buildQuickLaunchEffect(
       name: 'Quick Comet',
       type: 'comet',
       color,
-      height: 95,
-      duration: 1.5,
-      intensity: 0.95,
-      particleCount: 120,
+      height: 128,
+      duration: 1.9,
+      intensity: 1,
+      particleCount: 180,
       spread: 120,
-      trailLength: 0.75,
+      trailLength: 0.9,
     };
   }
 
@@ -189,12 +210,12 @@ export function buildQuickLaunchEffect(
     name: 'Quick Peony',
     type: 'peony',
     color,
-    height: 90,
-    duration: 1.8,
+    height: 132,
+    duration: 2.3,
     intensity: 1,
-    particleCount: 180,
+    particleCount: 280,
     spread: 360,
-    trailLength: 0.5,
+    trailLength: 0.62,
   };
 }
 

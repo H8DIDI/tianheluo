@@ -18,10 +18,12 @@ import GPUParticleSystem, { GPUParticleEmitter } from './GPUParticleSystem';
 import { deepAudioEngine } from '../../utils/deepAudioEngine';
 import {
   buildQuickLaunchEffect,
+  getQuickLaunchBurstProfile,
   getQuickLaunchLaunchPoint,
   type QuickLaunchRequest,
 } from './quickLaunch';
 import { buildBurstPattern, resolveBurstPatternMeta } from './burstPatterns';
+import { clampBurstHeight, normalizeTubeDirection } from './stageTuning';
 import {
   shouldTriggerScheduledItem,
   updateCueShellParticle,
@@ -137,14 +139,11 @@ function clampHeightPosition(particle: EnhancedParticle) {
 }
 
 function getBurstHeight(effect: FireworkEffect, isGroundEffect: boolean) {
-  // 地面效果保持低空限制
+  const scaledHeight = effect.height * BURST_HEIGHT_SCALE;
   if (isGroundEffect) {
-    const baseHeight = effect.height * BURST_HEIGHT_SCALE;
-    return clamp(baseHeight, GROUND_BURST_MIN, GROUND_BURST_MAX);
+    return clampBurstHeight(clamp(scaledHeight, GROUND_BURST_MIN, GROUND_BURST_MAX), true);
   }
-  // 空中效果：直接使用缩放后的高度，不做额外限制
-  // 让效果参数决定高度，物理引擎会自然限制
-  return effect.height * BURST_HEIGHT_SCALE;
+  return clampBurstHeight(scaledHeight, false);
 }
 
 /**
@@ -235,10 +234,10 @@ function getTubeTransform(position: Position, rack: Rack, tube: Tube) {
   directionY = Math.sin(tiltRad);
   directionZ = Math.cos(tiltRad) * Math.cos(angleRad);
 
-  const length = Math.sqrt(directionX ** 2 + directionY ** 2 + directionZ ** 2);
-  directionX /= length || 1;
-  directionY /= length || 1;
-  directionZ /= length || 1;
+  const normalized = normalizeTubeDirection([directionX, directionY, directionZ]);
+  directionX = normalized[0];
+  directionY = normalized[1];
+  directionZ = normalized[2];
 
   return {
     position: [tubeX, tubeY, tubeZ] as [number, number, number],
@@ -552,9 +551,10 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
   const spawnQuickLaunch = (request: QuickLaunchRequest) => {
     const effect = buildQuickLaunchEffect(request.preset, `quick-${request.id}`, request.customLabel);
     const launchPos = getQuickLaunchLaunchPoint(request.world);
-    const burstHeight = request.preset === 'willow' ? 30 : request.preset === 'comet' ? 18 : 24;
+    const profile = getQuickLaunchBurstProfile(request.preset);
+    const burstHeight = profile.burstHeight;
     const burstPos: [number, number, number] = [request.world[0], burstHeight, request.world[2]];
-    const burstDelay = request.preset === 'comet' ? 0.8 : request.preset === 'willow' ? 1.35 : 1.15;
+    const burstDelay = profile.burstDelay;
     const velocity: [number, number, number] = [
       (burstPos[0] - launchPos[0]) / burstDelay,
       (burstPos[1] - launchPos[1] - 0.5 * GRAVITY * burstDelay * burstDelay) / burstDelay,
