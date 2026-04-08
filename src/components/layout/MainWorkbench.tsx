@@ -71,6 +71,7 @@ export function MainWorkbench({ onOpenManager, onOpenAdmin, onOpenAssistant }: M
                     <option value="comet">彗星</option>
                     <option value="ring">圆环</option>
                     <option value="heart">爱心</option>
+                    <option value="star">星形</option>
                   </select>
                   <button
                     className="h-10 rounded-xl border border-panel-border bg-panel-bg px-3 text-sm text-text-main inline-flex items-center gap-2"

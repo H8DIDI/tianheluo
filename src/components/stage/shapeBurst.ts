@@ -1,12 +1,20 @@
 import type { FireworkEffect } from '../../types/domain';
 
-export type ShapeBurstPattern = 'ring' | 'heart';
+export type ShapeBurstPattern = 'ring' | 'heart' | 'star';
 
 export function buildShapeBurstPattern(
   pattern: ShapeBurstPattern,
   count: number,
   scale: number
 ): Array<[number, number, number]> {
+  if (pattern === 'star') {
+    return Array.from({ length: count }, (_, index) => {
+      const angle = (index / count) * Math.PI * 2;
+      const radius = index % 2 === 0 ? scale : scale * 0.42;
+      return [Math.cos(angle) * radius, Math.sin(angle) * radius, 0];
+    });
+  }
+
   if (pattern === 'heart') {
     return Array.from({ length: count }, (_, index) => {
       const t = (index / count) * Math.PI * 2;
@@ -32,13 +40,13 @@ export function buildShapeQuickLaunchEffect(
 ): FireworkEffect {
   return {
     id,
-    name: pattern === 'ring' ? 'Shape Ring' : 'Shape Heart',
+    name: pattern === 'ring' ? 'Shape Ring' : pattern === 'heart' ? 'Shape Heart' : 'Shape Star',
     type: 'burst',
-    color: pattern === 'ring' ? '#FDE047' : '#F472B6',
+    color: pattern === 'ring' ? '#FDE047' : pattern === 'heart' ? '#F472B6' : '#60A5FA',
     height: 100,
-    duration: pattern === 'ring' ? 1.9 : 2.2,
+    duration: pattern === 'ring' ? 1.9 : pattern === 'heart' ? 2.2 : 2,
     intensity: 1,
-    particleCount: pattern === 'ring' ? 140 : 180,
+    particleCount: pattern === 'ring' ? 140 : pattern === 'heart' ? 180 : 160,
     spread: 360,
     trailLength: 0.55,
     shapePattern: pattern,

@@ -1,6 +1,6 @@
 export type QuickLaunchSource = 'stage-tap' | 'quick-button';
 
-export type QuickLaunchPreset = 'peony' | 'willow' | 'comet' | 'ring' | 'heart';
+export type QuickLaunchPreset = 'peony' | 'willow' | 'comet' | 'ring' | 'heart' | 'star';
 
 export type QuickLaunchRequest = {
   id: string;
@@ -20,7 +20,7 @@ export type QuickLaunchEffect = {
   particleCount: number;
   spread: number;
   trailLength: number;
-  shapePattern?: 'ring' | 'heart';
+  shapePattern?: 'ring' | 'heart' | 'star';
 };
 
 const QUICK_LAUNCH_PRESET_COLORS: Record<QuickLaunchPreset, string[]> = {
@@ -29,6 +29,7 @@ const QUICK_LAUNCH_PRESET_COLORS: Record<QuickLaunchPreset, string[]> = {
   comet: ['#60A5FA', '#C084FC', '#F472B6'],
   ring: ['#FDE047', '#F59E0B', '#FFFFFF'],
   heart: ['#F472B6', '#FB7185', '#FCA5A5'],
+  star: ['#60A5FA', '#93C5FD', '#FDE68A'],
 };
 
 function createOffsetWorld(
@@ -126,6 +127,22 @@ export function buildQuickLaunchEffect(
       spread: 360,
       trailLength: 0.6,
       shapePattern: 'heart',
+    };
+  }
+
+  if (preset === 'star') {
+    return {
+      id,
+      name: 'Quick Star',
+      type: 'burst',
+      color,
+      height: 96,
+      duration: 2,
+      intensity: 1,
+      particleCount: 160,
+      spread: 360,
+      trailLength: 0.58,
+      shapePattern: 'star',
     };
   }
 
