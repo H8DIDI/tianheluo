@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { Canvas, ThreeEvent } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
@@ -55,9 +55,19 @@ function StageCube({ visible, spec }: { visible: boolean; spec: StageCubeSpec })
 
 export function Stage3D() {
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
-  const [showStageCube, setShowStageCube] = useState(true);
+  const [showStageCube, setShowStageCube] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const project = useProjectStore((state) => state.project);
   const requestQuickLaunch = useProjectStore((state) => state.requestQuickLaunch);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const handler = () => setIsMobile(mq.matches);
+    handler();
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
   const stageCube = useMemo(
     () => getStageCubeSpec(project),
     [project]
@@ -101,22 +111,24 @@ export function Stage3D() {
           'linear-gradient(135deg, #0A0404 0%, #150606 60%, #1F0808 100%)',
       }}
     >
-      <div className="absolute top-4 left-4 z-10 bg-panel-bg/95 backdrop-blur-sm px-3 py-2 rounded border border-panel-border text-xs shadow-glow">
-        <div className="text-text-main font-medium">3D 场景预览</div>
-        <div className="text-text-secondary mt-1">拖动旋转 · 滚轮缩放 · 右键平移</div>
-        <button
-          onClick={handleResetView}
-          className="mt-2 w-full px-2 py-1 rounded border border-panel-border bg-panel-bg text-text-main hover:bg-panel-border"
-        >
-          正面视角
-        </button>
-        <button
-          onClick={() => setShowStageCube((prev) => !prev)}
-          className="mt-2 w-full px-2 py-1 rounded border border-panel-border bg-panel-bg text-text-main hover:bg-panel-border"
-        >
-          {showStageCube ? '隐藏空间' : '显示空间'}
-        </button>
-      </div>
+      {!isMobile && (
+        <div className="absolute top-4 left-4 z-10 bg-panel-bg/95 backdrop-blur-sm px-3 py-2 rounded border border-panel-border text-xs shadow-glow">
+          <div className="text-text-main font-medium">3D 场景预览</div>
+          <div className="text-text-secondary mt-1">拖动旋转 · 滚轮缩放 · 右键平移</div>
+          <button
+            onClick={handleResetView}
+            className="mt-2 w-full px-2 py-1 rounded border border-panel-border bg-panel-bg text-text-main hover:bg-panel-border"
+          >
+            正面视角
+          </button>
+          <button
+            onClick={() => setShowStageCube((prev) => !prev)}
+            className="mt-2 w-full px-2 py-1 rounded border border-panel-border bg-panel-bg text-text-main hover:bg-panel-border"
+          >
+            {showStageCube ? '隐藏空间' : '显示空间'}
+          </button>
+        </div>
+      )}
 
       <Canvas
         camera={{ position: [0, 50, 50], fov: 60, far: 5000 }}

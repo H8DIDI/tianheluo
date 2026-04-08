@@ -53,18 +53,18 @@ export function MainWorkbench({ onOpenManager, onOpenAdmin, onOpenAssistant }: M
           <div className="absolute inset-0">
             <Stage3D />
             <div className="absolute inset-x-0 bottom-0 p-3 pb-20 pointer-events-none">
-              <div className="pointer-events-auto rounded-2xl border border-panel-border bg-app-bg/88 backdrop-blur-md shadow-glow px-3 py-2 flex items-center justify-between gap-3">
+              <div className="pointer-events-auto rounded-2xl border border-panel-border bg-app-bg/88 backdrop-blur-md shadow-glow px-3 py-2 flex flex-col gap-2">
                 <div className="min-w-0">
                   <div className="text-sm font-semibold text-text-main truncate">烟花舞台</div>
                   <div className="text-[11px] text-text-secondary truncate">
                     点舞台直接放烟花，先玩起来，再进编排
                   </div>
                 </div>
-                <div className="flex items-center gap-2 flex-wrap justify-end">
+                <div className="flex items-center gap-2">
                   <select
                     value={quickLaunchPreset}
                     onChange={(event) => setQuickLaunchPreset(event.target.value as typeof quickLaunchPreset)}
-                    className="h-10 rounded-xl border border-panel-border bg-panel-bg px-3 text-sm text-text-main"
+                    className="h-9 flex-1 min-w-0 rounded-xl border border-panel-border bg-panel-bg px-2 text-sm text-text-main"
                   >
                     <option value="peony">牡丹</option>
                     <option value="willow">垂柳</option>
@@ -74,25 +74,18 @@ export function MainWorkbench({ onOpenManager, onOpenAdmin, onOpenAssistant }: M
                     <option value="star">星形</option>
                   </select>
                   <button
-                    className="h-10 rounded-xl border border-panel-border bg-panel-bg px-3 text-sm text-text-main inline-flex items-center gap-2"
+                    className="h-9 rounded-xl border border-panel-border bg-panel-bg px-3 text-sm text-text-main inline-flex items-center gap-1.5 flex-shrink-0"
                     onClick={() => enqueueQuickLaunches(createQuickLaunchSalvoRequests([0, 0, -8], quickLaunchPreset))}
                     title="一键齐射"
                   >
-                    <Zap size={16} /> 齐射
+                    <Zap size={15} /> 齐射
                   </button>
                   <button
-                    className="h-10 rounded-xl border border-panel-border bg-panel-bg px-3 text-sm text-text-main inline-flex items-center gap-2"
+                    className="h-9 rounded-xl border border-panel-border bg-panel-bg px-3 text-sm text-text-main inline-flex items-center gap-1.5 flex-shrink-0"
                     onClick={() => enqueueQuickLaunches(createQuickLaunchRandomShowRequests(quickLaunchPreset))}
                     title="随机秀"
                   >
-                    <Wand2 size={16} /> 随机秀
-                  </button>
-                  <button
-                    className="h-12 w-12 rounded-full bg-primary text-white shadow-glow flex items-center justify-center"
-                    onClick={() => setActiveMobilePanel('timeline')}
-                    title="打开时间轴"
-                  >
-                    <Timer size={20} />
+                    <Wand2 size={15} /> 随机秀
                   </button>
                 </div>
               </div>
