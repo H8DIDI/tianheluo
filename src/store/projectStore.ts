@@ -67,6 +67,9 @@ interface ProjectState {
   // Playback
   setCurrentTime: (time: number) => void;
   setIsPlaying: (isPlaying: boolean) => void;
+  togglePlayback: () => void;
+  resetPlayback: () => void;
+  replayShow: () => void;
   requestReplay: () => void;
   requestQuickLaunch: (payload: { world: [number, number, number]; source: QuickLaunchSource }) => void;
   enqueueQuickLaunches: (requests: QuickLaunchRequest[]) => void;
@@ -696,6 +699,12 @@ export const useProjectStore = create<ProjectState>((set) => ({
     })),
 
   setIsPlaying: (isPlaying) => set({ isPlaying }),
+  togglePlayback: () =>
+    set((state) => ({ isPlaying: !state.isPlaying })),
+  resetPlayback: () =>
+    set(() => ({ currentTime: 0, isPlaying: false })),
+  replayShow: () =>
+    set((state) => ({ currentTime: 0, isPlaying: true, replayToken: state.replayToken + 1 })),
   requestReplay: () => set((state) => ({ replayToken: state.replayToken + 1 })),
   requestQuickLaunch: ({ world, source }) =>
     set((state) => ({

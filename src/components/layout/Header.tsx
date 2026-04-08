@@ -22,15 +22,16 @@ interface HeaderProps {
 }
 
 export function Header({ onOpenManager, onOpenAdmin, onOpenAssistant, mobile = false }: HeaderProps) {
-  const { project, isPlaying, setIsPlaying, currentTime, setCurrentTime, requestReplay, refillTubes } =
+  const { project, isPlaying, currentTime, setIsPlaying, togglePlayback, resetPlayback, replayShow, refillTubes } =
     useProjectStore(
       useShallow((state) => ({
         project: state.project,
         isPlaying: state.isPlaying,
-        setIsPlaying: state.setIsPlaying,
         currentTime: state.currentTime,
-        setCurrentTime: state.setCurrentTime,
-        requestReplay: state.requestReplay,
+        setIsPlaying: state.setIsPlaying,
+        togglePlayback: state.togglePlayback,
+        resetPlayback: state.resetPlayback,
+        replayShow: state.replayShow,
         refillTubes: state.refillTubes,
       }))
     );
@@ -39,24 +40,18 @@ export function Header({ onOpenManager, onOpenAdmin, onOpenAssistant, mobile = f
   const timeLabel = `${Math.floor(currentTime / 60)}:${String(Math.floor(currentTime % 60)).padStart(2, '0')}`;
 
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+    togglePlayback();
   };
 
   const handleReset = () => {
-    setCurrentTime(0);
-    setIsPlaying(false);
+    resetPlayback();
     refillTubes();
   };
 
   const handleReplay = () => {
     if (!project) return;
-    setIsPlaying(false);
-    setCurrentTime(0);
     refillTubes();
-    requestReplay();
-    setTimeout(() => {
-      setIsPlaying(true);
-    }, 0);
+    replayShow();
   };
 
   const handleExportPDF = async () => {

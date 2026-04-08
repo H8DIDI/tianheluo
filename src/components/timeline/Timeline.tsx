@@ -11,8 +11,8 @@ export function Timeline() {
     currentTime,
     setCurrentTime,
     isPlaying,
-    setIsPlaying,
-    requestReplay,
+    togglePlayback,
+    replayShow,
     selectedEvent,
     updateEvent,
     selectEvent,
@@ -27,8 +27,8 @@ export function Timeline() {
       currentTime: state.currentTime,
       setCurrentTime: state.setCurrentTime,
       isPlaying: state.isPlaying,
-      setIsPlaying: state.setIsPlaying,
-      requestReplay: state.requestReplay,
+      togglePlayback: state.togglePlayback,
+      replayShow: state.replayShow,
       selectedEvent: state.selectedEvent,
       updateEvent: state.updateEvent,
       selectEvent: state.selectEvent,
@@ -331,22 +331,19 @@ export function Timeline() {
         </div>
         <div className="flex items-center gap-4 text-xs text-white flex-1 justify-end">
           <div className="flex items-center gap-2">
-            <button
-              className="px-3 py-1.5 rounded bg-panel-bg hover:bg-panel-border text-text-main inline-flex items-center gap-1.5"
-              onClick={() => setIsPlaying(!isPlaying)}
-            >
-              {isPlaying ? <Pause size={14} /> : <Play size={14} />}
-              {isPlaying ? '暂停' : '播放'}
+              <button
+                className="px-3 py-1.5 rounded bg-panel-bg hover:bg-panel-border text-text-main inline-flex items-center gap-1.5"
+                onClick={togglePlayback}
+              >
+                {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+                {isPlaying ? '暂停' : '播放'}
             </button>
-            <button
-              className="px-3 py-1.5 rounded bg-panel-bg hover:bg-panel-border text-text-main inline-flex items-center gap-1.5"
-              onClick={() => {
-                requestReplay();
-                setIsPlaying(true);
-              }}
-            >
-              <RotateCcw size={14} /> 重播
-            </button>
+              <button
+                className="px-3 py-1.5 rounded bg-panel-bg hover:bg-panel-border text-text-main inline-flex items-center gap-1.5"
+                onClick={replayShow}
+              >
+                <RotateCcw size={14} /> 重播
+              </button>
             <button
               className="px-3 py-1.5 rounded bg-panel-bg hover:bg-panel-border text-text-main inline-flex items-center gap-1.5"
               onClick={handleGenerateFinaleTimeline}
