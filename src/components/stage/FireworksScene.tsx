@@ -24,6 +24,7 @@ import {
   getQuickLaunchLaunchPoint,
   type QuickLaunchRequest,
 } from './quickLaunch';
+import { buildShapeBurstPattern } from './shapeBurst';
 import {
   shouldTriggerScheduledItem,
   updateCueShellParticle,
@@ -683,11 +684,36 @@ export function FireworksScene({ heightLimit }: { heightLimit?: number }) {
     const colors: Array<[number, number, number]> = [];
     const lifespans: number[] = [];
     const sizes: number[] = [];
+    const shapePattern = effect.shapePattern
+      ? buildShapeBurstPattern(effect.shapePattern, particleCount, 10)
+      : null;
 
     for (let i = 0; i < particleCount; i++) {
       let angle: number;
       let elevation: number;
       let speed: number;
+
+      if (shapePattern) {
+        const point = shapePattern[i % shapePattern.length];
+        const duration = Math.max(resolvedHangTime * 0.55, 0.9);
+        velocities.push([
+          point[0] / duration,
+          point[1] / duration,
+          point[2] / duration,
+        ]);
+
+        const targetColor = colorScheme[Math.floor(Math.random() * colorScheme.length)];
+        const brightness = 0.7 + Math.random() * 0.5;
+        colors.push([
+          targetColor.r * brightness,
+          targetColor.g * brightness,
+          targetColor.b * brightness,
+        ]);
+
+        lifespans.push(resolvedHangTime);
+        sizes.push(4.2 + Math.random() * 2.5);
+        continue;
+      }
 
       switch (effect.type) {
         case 'peony':

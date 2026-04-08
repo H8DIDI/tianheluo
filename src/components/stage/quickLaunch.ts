@@ -1,6 +1,6 @@
 export type QuickLaunchSource = 'stage-tap' | 'quick-button';
 
-export type QuickLaunchPreset = 'peony' | 'willow' | 'comet';
+export type QuickLaunchPreset = 'peony' | 'willow' | 'comet' | 'ring' | 'heart';
 
 export type QuickLaunchRequest = {
   id: string;
@@ -12,7 +12,7 @@ export type QuickLaunchRequest = {
 export type QuickLaunchEffect = {
   id: string;
   name: string;
-  type: 'peony' | 'willow' | 'comet';
+  type: 'peony' | 'willow' | 'comet' | 'burst';
   color: string;
   height: number;
   duration: number;
@@ -20,12 +20,15 @@ export type QuickLaunchEffect = {
   particleCount: number;
   spread: number;
   trailLength: number;
+  shapePattern?: 'ring' | 'heart';
 };
 
 const QUICK_LAUNCH_PRESET_COLORS: Record<QuickLaunchPreset, string[]> = {
   peony: ['#F59E0B', '#EF4444', '#FDE047'],
   willow: ['#FDE68A', '#FBBF24', '#F59E0B'],
   comet: ['#60A5FA', '#C084FC', '#F472B6'],
+  ring: ['#FDE047', '#F59E0B', '#FFFFFF'],
+  heart: ['#F472B6', '#FB7185', '#FCA5A5'],
 };
 
 function createOffsetWorld(
@@ -91,6 +94,38 @@ export function buildQuickLaunchEffect(
       particleCount: 120,
       spread: 120,
       trailLength: 0.75,
+    };
+  }
+
+  if (preset === 'ring') {
+    return {
+      id,
+      name: 'Quick Ring',
+      type: 'burst',
+      color,
+      height: 90,
+      duration: 1.9,
+      intensity: 1,
+      particleCount: 140,
+      spread: 360,
+      trailLength: 0.55,
+      shapePattern: 'ring',
+    };
+  }
+
+  if (preset === 'heart') {
+    return {
+      id,
+      name: 'Quick Heart',
+      type: 'burst',
+      color,
+      height: 95,
+      duration: 2.2,
+      intensity: 1,
+      particleCount: 180,
+      spread: 360,
+      trailLength: 0.6,
+      shapePattern: 'heart',
     };
   }
 
