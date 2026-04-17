@@ -4,11 +4,11 @@ export async function onRequestGet({ request, env }) {
   const tag = url.searchParams.get('tag') || '';
   const source = url.searchParams.get('source') || '';
 
-  if (!env.DB) {
-    return Response.json({ error: 'D1 binding missing' }, { status: 500 });
-  }
+  if (!env.DB) return Response.json({ error: 'D1 binding missing' }, { status: 500 });
 
-  let sql = `SELECT id, source, channel_name, title, description, url, published_at, tags, featured
+  let sql = `SELECT id, source, channel_name, title, description, url, thumbnail, bvid,
+                    play_count, like_count, coin_count, favorite_count, duration,
+                    published_at, tags, featured
              FROM videos WHERE 1=1`;
   const params = [];
   if (source) { sql += ' AND source=?'; params.push(source); }
@@ -20,6 +20,7 @@ export async function onRequestGet({ request, env }) {
     const { results } = await env.DB.prepare(sql).bind(...params).all();
     const items = results.map((r) => ({
       ...r,
+      thumbnail: r.thumbnail ? r.thumbnail.replace(/^http:/, 'https:') : null,
       tags: r.tags ? JSON.parse(r.tags) : [],
     }));
     return Response.json({ items }, {

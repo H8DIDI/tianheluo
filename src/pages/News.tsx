@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ExternalLink, Newspaper } from 'lucide-react';
 
 type NewsItem = {
   id: string;
@@ -21,16 +22,6 @@ const mock: NewsItem[] = [
     url: '#',
     published_at: Date.parse('2026-04-12') / 1000,
     tags: ['产业数据', '浏阳'],
-  },
-  {
-    id: 'n2',
-    source: 'yicai',
-    source_name: '第一财经',
-    title: '烟花出海：东南亚订单为何集体转向湖南',
-    summary: '多家业内公司反馈，今年以来东南亚节庆采购订单向浏阳、醴陵集中，头部企业排产已至 Q3。',
-    url: '#',
-    published_at: Date.parse('2026-04-09') / 1000,
-    tags: ['出口', '产业'],
   },
 ];
 
@@ -56,26 +47,37 @@ export default function News() {
   const usingMock = items === mock;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <section>
-        <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
-          <h1 className="text-2xl font-bold tracking-tight">浏阳花炮 · 最新资讯</h1>
-          <span className="text-xs text-neutral-500">
-            {loading ? '加载中…' : usingMock ? '展示为样例内容（真实数据对接中）' : `${list.length} 条 · 日更`}
-          </span>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-400/20 bg-sky-400/5 px-3 py-1 text-[11px] font-medium text-sky-300">
+              <Newspaper size={11} /> 关键词订阅
+            </div>
+            <h1 className="mt-3 text-3xl font-bold tracking-tight text-neutral-50 sm:text-4xl">
+              浏阳花炮 · 最新资讯
+            </h1>
+            <p className="mt-2 max-w-2xl text-[14.5px] leading-relaxed text-neutral-400">
+              追踪关键词：<span className="rounded bg-white/5 px-1 font-mono text-xs">浏阳花炮</span>{' '}
+              <span className="rounded bg-white/5 px-1 font-mono text-xs">烟花产业</span>{' '}
+              <span className="rounded bg-white/5 px-1 font-mono text-xs">花炮出口</span>{' '}
+              <span className="rounded bg-white/5 px-1 font-mono text-xs">燃放政策</span>。
+              仅展示标题与摘要，点击跳转原站。
+            </p>
+          </div>
+          <div className="text-right text-xs text-neutral-500">
+            {loading ? '加载中…' : usingMock ? '样例内容' : `${list.length} 条`}
+          </div>
         </div>
-        <p className="max-w-2xl text-sm text-neutral-400">
-          关键词追踪："浏阳花炮" / "烟花产业" / "花炮出口" / "燃放政策"。仅展示标题与摘要，点击跳转原站。
-        </p>
       </section>
 
       <section className="space-y-3">
         {loading ? (
-          Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded-lg bg-white/[0.04]" />
+          Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-28 animate-pulse rounded-xl border border-white/[0.06] bg-white/[0.03]" />
           ))
         ) : list.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-white/10 p-8 text-center text-sm text-neutral-500">
+          <div className="rounded-xl border border-dashed border-white/10 p-10 text-center text-sm text-neutral-500">
             暂无匹配资讯，抓取管线正在对接更多信源。
           </div>
         ) : (
@@ -85,27 +87,39 @@ export default function News() {
               href={n.url}
               target="_blank"
               rel="noreferrer noopener"
-              className="block rounded-lg border border-white/10 bg-white/[0.03] p-4 transition-all hover:-translate-y-0.5 hover:border-amber-400/40 hover:bg-white/[0.06]"
+              className="group block rounded-xl border border-white/[0.08] bg-neutral-900/40 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-400/40 hover:bg-neutral-900/60 hover:shadow-[0_0_0_1px_rgba(245,158,11,0.06)]"
             >
-              <div className="flex items-center gap-2 text-[11px] text-neutral-500">
-                <span className="rounded bg-amber-500/10 px-1.5 py-0.5 text-amber-300">
+              <div className="flex items-center gap-2 text-[11px]">
+                <span className="rounded-md bg-amber-500/10 px-2 py-0.5 font-medium text-amber-300 ring-1 ring-inset ring-amber-400/20">
                   {n.source_name || n.source}
                 </span>
-                <span>{fmtDate(n.published_at)}</span>
+                <span className="font-mono tabular-nums text-neutral-500">{fmtDate(n.published_at)}</span>
               </div>
-              <h3 className="mt-2 text-base font-semibold text-neutral-100">{n.title}</h3>
+              <h3 className="mt-2.5 text-[17px] font-semibold leading-snug text-neutral-100 transition-colors group-hover:text-amber-200">
+                {n.title}
+              </h3>
               {n.summary && (
-                <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-neutral-400">{n.summary}</p>
+                <p className="mt-1.5 line-clamp-2 text-[13.5px] leading-relaxed text-neutral-400">{n.summary}</p>
               )}
-              {n.tags && n.tags.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-1">
-                  {n.tags.slice(0, 5).map((t) => (
-                    <span key={t} className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-neutral-400">
-                      #{t}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <div className="mt-3 flex items-center justify-between">
+                {n.tags && n.tags.length > 0 ? (
+                  <div className="flex flex-wrap gap-1">
+                    {n.tags.slice(0, 5).map((t) => (
+                      <span
+                        key={t}
+                        className="rounded bg-white/[0.04] px-1.5 py-0.5 text-[10px] text-neutral-400 ring-1 ring-inset ring-white/5"
+                      >
+                        #{t}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <span />
+                )}
+                <span className="flex items-center gap-1 text-[11px] text-neutral-500 transition-colors group-hover:text-amber-300">
+                  阅读原文 <ExternalLink size={11} />
+                </span>
+              </div>
             </a>
           ))
         )}
