@@ -1,21 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
-@theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-
-  --color-base: #08090a;
-  --color-surface: #101113;
-  --color-elevated: #17181c;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-strong: rgba(255, 255, 255, 0.14);
-  --color-fg: #ebebec;
-  --color-fg-muted: #a6a7ab;
-  --color-fg-subtle: #70717a;
-  --color-accent: #f59e0b;
-  --color-accent-soft: rgba(245, 158, 11, 0.12);
-}
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap');
 
 * {
   margin: 0;
@@ -25,59 +9,91 @@
 
 html, body {
   height: 100%;
+  background-color: #000;
+  color: #fff;
 }
 
 body {
-  font-family: var(--font-sans);
-  font-feature-settings: 'ss01', 'cv01', 'cv11';
+  font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-feature-settings: 'ss01', 'ss08', 'cv01', 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  background-color: var(--color-base);
-  color: var(--color-fg);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: -0.011em;
 }
 
-/* Scrollbars — subtle */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+.font-mono, code, kbd, pre {
+  font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
+
+/* Global: tighter heading letter-spacing like Vercel */
+h1, h2, h3 {
+  letter-spacing: -0.025em;
+  line-height: 1.1;
 }
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.14);
-}
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
 
 ::selection {
-  background: rgba(245, 158, 11, 0.3);
-  color: #fef3c7;
+  background: rgba(245, 158, 11, 0.35);
+  color: #fff;
 }
 
-/* Simulator fullscreen container */
+/* Simulator fullscreen */
 .simulator-root {
   width: 100vw;
   height: 100dvh;
   overflow: hidden;
 }
 
-/* Utility for small-caps-like labels */
+/* Animated gradient border (for hero pills) */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.hero-gradient-text {
+  background: linear-gradient(90deg, #fff 0%, #fff 45%, #f59e0b 55%, #fff 65%, #fff 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 8s ease-in-out infinite;
+}
+
+/* Grid lines background (Vercel-style) */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%);
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Utility */
 .label-caps {
+  font-family: 'Geist Mono', ui-monospace, monospace;
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-/* Focus ring consistent */
-:focus-visible {
-  outline: 2px solid rgba(245, 158, 11, 0.6);
-  outline-offset: 2px;
-  border-radius: 4px;
+.number-display {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { TrendingUp, Database, Activity, Rss } from 'lucide-react';
+import { TrendingUp, Activity, Rss, Building2 } from 'lucide-react';
+import { PageHero, SectionWrap, SectionHeader } from '../components/PageScaffold';
 
 type Stats = {
   videos: number;
@@ -17,7 +18,6 @@ type Stats = {
 
 export default function Data() {
   const [stats, setStats] = useState<Stats | null>(null);
-
   useEffect(() => {
     fetch('/api/stats').then((r) => r.json()).then(setStats).catch(() => {});
   }, []);
@@ -25,7 +25,7 @@ export default function Data() {
   const industry = stats?.industry;
   const kpis = [
     { label: '产业年产值', value: industry?.annual_output ?? '508.9', unit: industry?.annual_output_unit ?? '亿元', note: '2024 年', icon: TrendingUp, tone: 'amber' as const },
-    { label: '规上企业', value: String(industry?.above_scale_companies ?? 431), unit: '家', note: '浏阳片区', icon: Database, tone: 'sky' as const },
+    { label: '规上企业', value: String(industry?.above_scale_companies ?? 431), unit: '家', note: '浏阳片区', icon: Building2, tone: 'sky' as const },
     { label: '相关专利', value: String(industry?.patents ?? 3721), unit: '项', note: '近十年累计', icon: Activity, tone: 'emerald' as const },
     { label: '出口国家', value: industry?.export_countries ?? '100+', unit: '国', note: '常年稳定', icon: Rss, tone: 'fuchsia' as const },
   ];
@@ -50,95 +50,83 @@ export default function Data() {
   ];
 
   return (
-    <div className="space-y-10 md:space-y-14">
-      <section>
-        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/5 px-3 py-1 text-[11px] font-medium text-emerald-300">
-          <TrendingUp size={11} /> 产业指标
-        </div>
-        <h1 className="mt-3 text-[28px] font-bold leading-tight tracking-tight text-white sm:text-[34px] md:text-[40px]">
-          产业数据 · 企业名录
-        </h1>
-        <p className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-white/60 sm:text-[14.5px]">
-          宏观数据来源：浏阳市统计公报、湖南省工信厅及公开年报。
-          企业名录后续将从公开政府数据源和商业 API 抓取更新，支持按主营、资质、出口能力筛选。
-        </p>
-      </section>
-
-      <section>
-        <div className="flex items-center gap-3">
-          <h2 className="label-caps text-white/70">核心指标</h2>
-          <div className="h-px flex-1 bg-white/[0.06]" />
-        </div>
-        <div className="mt-4 grid gap-3 grid-cols-2 md:gap-4 lg:grid-cols-4">
+    <>
+      <PageHero
+        eyebrow={<><TrendingUp size={11} /> 产业指标</>}
+        title="产业数据 · 企业名录"
+        subtitle="宏观数据来源于浏阳市统计公报、湖南省工信厅及公开年报。企业名录后续将从公开政府数据源和商业 API 抓取更新。"
+        tone="emerald"
+      />
+      <SectionWrap>
+        <SectionHeader eyebrow="Core" title="核心指标" />
+        <div className="mt-8 grid gap-4 grid-cols-2 lg:grid-cols-4">
           {kpis.map((s) => {
             const tone = toneMap[s.tone];
             const Icon = s.icon;
             return (
               <div
                 key={s.label}
-                className="rounded-xl border border-white/[0.08] bg-[#101113] p-4 transition-all hover:-translate-y-0.5 hover:border-white/15 sm:p-5"
+                className="rounded-2xl border border-white/[0.08] bg-[#0A0A0A] p-5 transition-all hover:-translate-y-0.5 hover:border-white/15 sm:p-6"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] text-white/50">{s.label}</span>
-                  <span className={`rounded-md ${tone.bg} p-1 ${tone.text} ring-1 ring-inset ${tone.ring}`}>
-                    <Icon size={13} />
+                  <span className="text-[12px] font-medium text-white/45">{s.label}</span>
+                  <span className={`rounded-lg ${tone.bg} p-1.5 ${tone.text} ring-1 ring-inset ${tone.ring}`}>
+                    <Icon size={14} />
                   </span>
                 </div>
-                <div className="mt-3 flex items-baseline gap-1">
-                  <span className={`text-[26px] font-bold tabular-nums tracking-tight sm:text-[30px] ${tone.text}`}>
-                    {s.value}
-                  </span>
-                  <span className="text-[13px] text-white/50">{s.unit}</span>
+                <div className="mt-4 flex items-baseline gap-1.5">
+                  <span className={`number-display text-[34px] font-bold sm:text-[40px] ${tone.text}`}>{s.value}</span>
+                  <span className="text-[14px] text-white/45">{s.unit}</span>
                 </div>
-                <div className="mt-1 text-[11px] text-white/35">{s.note}</div>
+                <div className="mt-1 text-[11.5px] text-white/35">{s.note}</div>
               </div>
             );
           })}
         </div>
-      </section>
 
-      <section>
-        <div className="flex items-center gap-3">
-          <h2 className="label-caps text-white/70">数据管线状态</h2>
-          <div className="h-px flex-1 bg-white/[0.06]" />
-        </div>
-        <div className="mt-4 grid gap-3 grid-cols-2 md:gap-4 lg:grid-cols-4">
-          {pipeline.map((p) => (
-            <div key={p.label} className="rounded-xl border border-white/[0.08] bg-[#101113] p-4">
-              <div className="text-[11px] text-white/50">{p.label}</div>
-              <div className="mt-1.5 text-[15px] font-semibold tabular-nums text-white">{p.value}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <div className="flex items-end justify-between gap-2">
-          <h2 className="label-caps text-white/70">企业名录</h2>
-          <span className="text-[11px] text-white/45">API 对接中</span>
-        </div>
-        <div className="mt-3 overflow-hidden rounded-xl border border-white/[0.08]">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[520px] text-sm">
-              <thead className="bg-white/[0.03] text-left">
-                <tr className="label-caps text-white/45">
-                  <th className="px-4 py-3">名称</th>
-                  <th className="px-4 py-3">类型</th>
-                  <th className="px-4 py-3">地区</th>
-                  <th className="px-4 py-3">状态</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-t border-white/[0.05] text-white/55">
-                  <td colSpan={4} className="px-4 py-8 text-center text-[13px] text-white/40">
-                    API 对接后将展示规上企业、资质、出口能力等信息
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        <div className="mt-16">
+          <SectionHeader eyebrow="Pipeline" title="数据管线状态" />
+          <div className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.06] grid-cols-2 lg:grid-cols-4">
+            {pipeline.map((p) => (
+              <div key={p.label} className="bg-[#0A0A0A] p-5 sm:p-6">
+                <div className="text-[12px] font-medium text-white/45">{p.label}</div>
+                <div className="mt-2 number-display text-[20px] font-semibold text-white sm:text-[22px]">
+                  {p.value}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </section>
-    </div>
+
+        <div className="mt-16">
+          <SectionHeader
+            eyebrow="Companies"
+            title="企业名录"
+            right={<span className="text-[12px] text-white/45">API 对接中</span>}
+          />
+          <div className="mt-6 overflow-hidden rounded-2xl border border-white/[0.08]">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[560px] text-sm">
+                <thead className="bg-white/[0.03]">
+                  <tr className="label-caps text-white/40">
+                    <th className="px-5 py-3.5 text-left">名称</th>
+                    <th className="px-5 py-3.5 text-left">类型</th>
+                    <th className="px-5 py-3.5 text-left">地区</th>
+                    <th className="px-5 py-3.5 text-left">状态</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-t border-white/[0.06]">
+                    <td colSpan={4} className="px-5 py-10 text-center text-[13px] text-white/40">
+                      API 对接后将展示规上企业、资质、出口能力等信息
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </SectionWrap>
+    </>
   );
 }

@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { Menu, X, Github } from 'lucide-react';
 
 const tabs = [
   { to: '/', label: '视频', end: true },
@@ -8,38 +8,51 @@ const tabs = [
   { to: '/news', label: '资讯' },
   { to: '/data', label: '数据' },
   { to: '/tools', label: '工具' },
+  { to: '/changelog', label: '更新日志' },
 ];
 
 export function TopNav() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => setOpen(false), [location.pathname]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#08090a]/85 backdrop-blur-xl">
-      <nav className="mx-auto flex h-14 max-w-[1280px] items-center px-4 sm:px-6">
-        <NavLink
-          to="/"
-          onClick={() => setOpen(false)}
-          className="flex items-center gap-2 text-[14.5px] font-semibold tracking-tight text-white"
-        >
-          <span className="grid h-7 w-7 place-items-center rounded-md bg-gradient-to-br from-amber-400 to-orange-500 text-[13px] shadow-[0_0_16px_rgba(245,158,11,0.35)]">
-            🎆
+    <header
+      className={`sticky top-0 z-50 transition-all duration-200 ${
+        scrolled
+          ? 'border-b border-white/[0.08] bg-black/80 backdrop-blur-xl'
+          : 'border-b border-transparent bg-black'
+      }`}
+    >
+      <nav className="mx-auto flex h-16 max-w-[1440px] items-center px-5 sm:h-[72px] sm:px-8 lg:px-10">
+        <NavLink to="/" className="flex items-center gap-2.5 text-[17px] font-bold tracking-tight text-white">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-white text-black font-black">
+            天
           </span>
-          <span>天河落</span>
-          <span className="hidden font-mono text-[11px] font-normal text-white/40 sm:inline">
-            / Tianheluo
+          <span className="hidden sm:inline">天河落</span>
+          <span className="hidden font-mono text-[11px] font-normal text-white/40 md:inline">
+            Tianheluo
           </span>
         </NavLink>
 
-        {/* Desktop tabs */}
-        <div className="ml-8 hidden items-center gap-0.5 md:flex">
+        <div className="ml-10 hidden items-center gap-1 md:flex">
           {tabs.map((t) => (
             <NavLink
               key={t.to}
               to={t.to}
               end={t.end}
               className={({ isActive }) =>
-                `relative rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors ${
-                  isActive ? 'text-amber-300' : 'text-white/60 hover:text-white'
+                `relative rounded-md px-3.5 py-2 text-[14.5px] font-medium transition-colors ${
+                  isActive ? 'text-white' : 'text-white/55 hover:text-white'
                 }`
               }
             >
@@ -47,7 +60,7 @@ export function TopNav() {
                 <>
                   {t.label}
                   {isActive && (
-                    <span className="absolute inset-x-3 -bottom-[14px] h-[2px] rounded-full bg-amber-400" />
+                    <span className="absolute inset-x-3.5 -bottom-[17px] h-[2px] rounded-full bg-white sm:-bottom-[21px]" />
                   )}
                 </>
               )}
@@ -55,43 +68,63 @@ export function TopNav() {
           ))}
         </div>
 
-        <div className="ml-auto flex items-center gap-3">
-          <span className="hidden items-center gap-1.5 text-[11px] text-white/50 lg:flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
-            日更 · 浏阳花炮
-          </span>
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          <a
+            href="https://github.com/H8DIDI/tianheluo"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="hidden h-9 items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.02] px-3 text-[13px] text-white/70 transition-colors hover:border-white/20 hover:text-white md:inline-flex"
+          >
+            <Github size={14} /> GitHub
+          </a>
+          <a
+            href="/tools/simulator"
+            className="hidden h-9 items-center rounded-md bg-white px-3.5 text-[13.5px] font-semibold text-black transition-colors hover:bg-white/90 sm:inline-flex"
+          >
+            打开模拟器 →
+          </a>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-label="菜单"
-            className="grid h-8 w-8 place-items-center rounded-md border border-white/10 text-white/70 hover:bg-white/5 md:hidden"
+            className="grid h-9 w-9 place-items-center rounded-md border border-white/10 text-white/80 hover:bg-white/5 md:hidden"
           >
-            {open ? <X size={16} /> : <Menu size={16} />}
+            {open ? <X size={18} /> : <Menu size={18} />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile drawer */}
       {open && (
-        <div className="border-t border-white/[0.06] md:hidden">
-          <div className="mx-auto flex max-w-[1280px] flex-col gap-1 px-4 py-3">
+        <div className="border-t border-white/[0.08] md:hidden">
+          <div className="mx-auto flex max-w-[1440px] flex-col gap-1 px-5 py-4">
             {tabs.map((t) => (
               <NavLink
                 key={t.to}
                 to={t.to}
                 end={t.end}
-                onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `rounded-md px-3 py-2 text-[14px] font-medium ${
-                    isActive
-                      ? 'bg-amber-400/10 text-amber-300'
-                      : 'text-white/70 hover:bg-white/5 hover:text-white'
+                  `rounded-md px-3 py-3 text-[15px] font-medium ${
+                    isActive ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
                   }`
                 }
               >
                 {t.label}
               </NavLink>
             ))}
+            <div className="mt-2 flex gap-2">
+              <a
+                href="https://github.com/H8DIDI/tianheluo"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-white/10 px-3 py-2.5 text-[13px] text-white/80"
+              >
+                <Github size={14} /> GitHub
+              </a>
+              <a
+                href="/tools/simulator"
+                className="flex flex-1 items-center justify-center rounded-md bg-white px-3 py-2.5 text-[13.5px] font-semibold text-black"
+              >
+                打开模拟器 →
+              </a>
+            </div>
           </div>
         </div>
       )}
