@@ -5,7 +5,7 @@
     <meta name="google" content="notranslate" />
     <meta name="baidu-site-verification" content="codeva-0nVQZzLiki" />
 
-    <!-- 结构化数据：WebSite + SoftwareApplication -->
+    <!-- 结构化数据：WebSite + Organization -->
     <script type="application/ld+json">
     [
       {
@@ -13,39 +13,21 @@
         "@type": "WebSite",
         "name": "天河落",
         "alternateName": "Tianheluo",
-        "url": "https://tianheluo.com/"
+        "url": "https://tianheluo.com/",
+        "description": "浏阳花炮产业聚合站，日更视频、资讯、产业数据与实用工具",
+        "inLanguage": "zh-CN"
       },
       {
         "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
+        "@type": "Organization",
         "name": "天河落",
-        "alternateName": "Tianheluo",
-        "description": "专业烟花燃放控制与3D编排系统，支持实时预览、多阵地管理、AI智能编排",
         "url": "https://tianheluo.com/",
-        "applicationCategory": "DesignApplication",
-        "operatingSystem": "Web Browser",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "CNY"
-        },
-        "author": {
-          "@type": "Person",
-          "name": "H8DIDI",
-          "url": "https://github.com/H8DIDI"
-        },
-        "sourceOrganization": {
-          "@type": "Organization",
-          "name": "浏阳花炮产业数字化"
-        },
-        "keywords": "烟花,花炮,浏阳,燃放控制,编排系统,fireworks,pyrotechnics,3D simulation",
-        "inLanguage": ["zh-CN", "en"],
-        "isAccessibleForFree": true,
-        "screenshot": "https://tianheluo.com/og-image.png"
+        "logo": "https://tianheluo.com/favicon.svg",
+        "description": "关注浏阳花炮产业的数字化聚合展示平台",
+        "sameAs": ["https://github.com/H8DIDI/tianheluo"]
       }
     ]
     </script>
-    <!-- FAQ 结构化数据 -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -56,39 +38,39 @@
           "name": "天河落是什么？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "天河落（Tianheluo）是一款开源的专业烟花燃放控制与3D编排系统，基于React 19和Three.js构建，支持GPU粒子渲染、800管专业阵地布局、AI智能编排等功能。"
+            "text": "天河落（Tianheluo）是聚焦浏阳花炮产业的数字化展示站：日更 B 站 / YouTube 专业烟花视频，追踪花炮产业资讯，呈现产业链与关键数据，并提供 3D 烟花编排、安全距离估算等实用工具。"
           }
         },
         {
           "@type": "Question",
-          "name": "天河落支持哪些烟花效果？",
+          "name": "数据多久更新一次？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "支持10+种烟花效果：牡丹(Peony)、菊花(Chrysanthemum)、柳(Willow)、彗星(Comet)、十字星(Crossette)、地雷(Mine)、喷泉(Fountain)等。"
+            "text": "视频和资讯每日凌晨 3 点通过自建 RSSHub 管线自动抓取、去重、打标后入库。产业数据按季度或年度手动更新。"
           }
         },
         {
           "@type": "Question",
-          "name": "天河落和浏阳花炮有什么关系？",
+          "name": "浏阳花炮产业有多大？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "天河落的设计灵感来源于湖南浏阳——世界烟花之乡。浏阳花炮产业年产值超500亿元，天河落旨在为花炮产业提供数字化编排工具。"
+            "text": "浏阳是世界烟花之乡，2024 年花炮产业年产值 508.9 亿元，规上企业 431 家，相关专利 3721 项，产品出口 100 多个国家。"
           }
         },
         {
           "@type": "Question",
-          "name": "天河落可以免费使用吗？",
+          "name": "3D 烟花模拟器在哪里？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "完全开源免费。直接访问 tianheluo.com 即可使用，无需下载安装。源代码在GitHub开放。"
+            "text": "原天河落 3D 编排系统整合到工具集中，访问 /tools/simulator 即可使用，支持 GPU 粒子、800 管阵地和时间轴编排。"
           }
         },
         {
           "@type": "Question",
-          "name": "GPU粒子引擎有什么特点？",
+          "name": "能免费使用吗？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "使用自定义GLSL着色器实现GPU粒子系统，支持100000粒子实时渲染。颜色温度衰减模拟金属盐冷却发色过程，配合5级Mipmap Bloom后处理。"
+            "text": "全部完全免费，无需登录。网站开源在 GitHub（H8DIDI/tianheluo），欢迎贡献或提交信源。"
           }
         }
       ]
@@ -96,18 +78,16 @@
     </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>天河落 — 专业烟花燃放控制与3D编排系统 | Fireworks Show Control</title>
-    <meta name="description" content="天河落是一款基于 React + Three.js 的专业烟花燃放控制与编排系统，支持3D实时预览、多阵地管理、AI智能编排。适用于浏阳花炮产业数字化、烟花秀设计与培训。" />
-    <meta name="keywords" content="烟花,花炮,燃放控制,编排系统,浏阳,fireworks,pyrotechnics,three.js,3D,烟花秀,show control,choreography,浏阳花炮,烟花之乡,花炮产业,数字化,文化创意" />
+    <title>天河落 — 浏阳花炮产业聚合 · 视频 · 资讯 · 产业链 · 工具</title>
+    <meta name="description" content="天河落是聚焦浏阳花炮产业的数字化聚合展示站：日更 B 站/YouTube 专业烟花视频，追踪花炮产业资讯，呈现完整产业链与关键数据，并提供 3D 烟花编排与实用计算工具。" />
+    <meta name="keywords" content="浏阳,花炮,烟花,产业,烟花秀,燃放,出口,浏阳花炮,fireworks,pyrotechnics,3D simulation,产业链,文化创意" />
     <meta name="author" content="H8DIDI" />
     <link rel="canonical" href="https://tianheluo.com/" />
     <link rel="alternate" hreflang="zh-CN" href="https://tianheluo.com/" />
-    <link rel="alternate" hreflang="en" href="https://tianheluo.com/" />
 
-    <!-- Open Graph / 社交分享 -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="天河落 — 专业烟花燃放控制与3D编排系统" />
-    <meta property="og:description" content="基于 React + Three.js 的烟花燃放控制系统，支持3D实时预览、多阵地管理、AI智能编排" />
+    <meta property="og:title" content="天河落 — 浏阳花炮产业聚合" />
+    <meta property="og:description" content="日更浏阳烟花视频 + 资讯 + 产业数据 + 3D 编排工具，一站式浏阳花炮产业观察" />
     <meta property="og:url" content="https://tianheluo.com/" />
     <meta property="og:image" content="https://tianheluo.com/og-image.png" />
     <meta property="og:image:type" content="image/png" />
@@ -115,61 +95,54 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="zh_CN" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="天河落 — 专业烟花燃放控制与3D编排系统" />
-    <meta name="twitter:description" content="基于 React + Three.js 的烟花燃放控制系统，支持3D实时预览、AI智能编排" />
+    <meta name="twitter:title" content="天河落 — 浏阳花炮产业聚合" />
+    <meta name="twitter:description" content="浏阳花炮产业聚合站：视频 · 资讯 · 产业链 · 数据 · 工具" />
     <meta name="twitter:image" content="https://tianheluo.com/og-image.png" />
   </head>
   <body>
     <div id="root">
-      <!-- SEO: 静态内容供搜索引擎爬虫抓取，React 加载后会覆盖 -->
-      <div style="background:#1a1a2e;color:#e0e0e0;padding:40px 20px;font-family:system-ui,-apple-system,sans-serif;max-width:800px;margin:0 auto;line-height:1.8">
-        <h1 style="color:#f59e0b;font-size:2em;margin-bottom:8px">🎆 天河落 — 专业烟花燃放控制与3D编排系统</h1>
+      <div style="background:#05050a;color:#e0e0e0;padding:40px 20px;font-family:system-ui,-apple-system,sans-serif;max-width:800px;margin:0 auto;line-height:1.8">
+        <h1 style="color:#f59e0b;font-size:2em;margin-bottom:8px">🎆 天河落 — 浏阳花炮产业聚合站</h1>
         <p style="font-size:1.1em;color:#a0a0b0">
-          天河落（Tianheluo）是一款基于 <strong>React 19 + Three.js</strong> 的专业烟花燃放控制与编排系统，
-          提供3D实时烟花模拟预览、多阵地管理、AI智能编排等功能。适用于烟花秀设计、花炮产业数字化和燃放培训。
+          天河落（Tianheluo）是聚焦中国<strong>浏阳花炮产业</strong>的数字化聚合展示站，
+          通过自建数据管线日更来自 B 站、YouTube 的专业烟花视频，追踪浏阳花炮相关资讯，
+          呈现完整产业链与关键数据，并提供 3D 烟花编排、预算测算等<strong>实用工具集</strong>。
         </p>
 
-        <h2 style="color:#f59e0b;margin-top:32px">✨ 核心功能</h2>
+        <h2 style="color:#f59e0b;margin-top:32px">📺 五个主要板块</h2>
         <ul style="padding-left:20px">
-          <li><strong>3D实时烟花模拟预览</strong> — 100000粒子GPU引擎，真实弹道模拟与金属盐冷却发色模型</li>
-          <li><strong>800管专业阵地布局</strong> — 前线弧形、双翼包围、中央矩阵、后排高空多层立体编排</li>
-          <li><strong>10+种烟花效果</strong> — 牡丹、菊花、柳、彗星、十字星、地雷、喷泉等，各有独立物理特性</li>
-          <li><strong>AI智能编排助手</strong> — 自然语言描述需求，AI自动生成专业烟花秀方案</li>
-          <li><strong>时间轴波次编辑</strong> — 可视化拖拽编排，支持齐射、波浪、螺旋等发射模式</li>
-          <li><strong>多阵地对称齐射</strong> — 左右翼同步、中心轴对称、V字波浪等专业编排模式</li>
-          <li><strong>完整的烟花资产管理</strong> — 数据库管理烟花效果库，支持自定义效果创建</li>
+          <li><strong>视频墙</strong> — B站 / YouTube 浏阳烟花与烟花秀专业内容聚合，日更，标签筛选</li>
+          <li><strong>产业链</strong> — 上游原料装备 · 中游药剂组装 · 下游流通应用，一屏看全景</li>
+          <li><strong>资讯</strong> — 百度新闻、财经媒体、政府公众号关键词追踪，仅标题摘要跳转原站</li>
+          <li><strong>数据 · 企业</strong> — 产业指标 + 规上企业名录（API 对接中）</li>
+          <li><strong>工具集</strong> — 3D 烟花编排模拟器、燃放时长估算、安全距离计算器、金属盐发色对照等</li>
         </ul>
 
-        <h2 style="color:#f59e0b;margin-top:32px">🏗️ 技术架构</h2>
+        <h2 style="color:#f59e0b;margin-top:32px">🎇 浏阳花炮 — 世界烟花之乡</h2>
+        <p>浏阳位于中国湖南，是世界烟花之乡，花炮产业已有 <strong>1400 多年</strong>历史，是全球最大的烟花生产基地。</p>
         <p>
-          前端：React 19 + TypeScript + Vite 6 + Three.js + Zustand 状态管理<br/>
-          3D引擎：Three.js + 自定义GLSL着色器 GPU粒子系统<br/>
-          后端：Cloudflare Workers + D1 数据库<br/>
-          部署：Cloudflare Pages（全球CDN加速）
+          <strong>浏阳花炮产业</strong>年产值达 <strong>508.9 亿元</strong>，拥有 431 家规上企业和 3721 项相关专利，
+          产品出口 100 多个国家。在<strong>文化创意</strong>赋能背景下，浏阳正从传统花炮制造向数字化、
+          智能化转型，天河落正是服务于这一转型的聚合展示窗口。
         </p>
 
-        <h2 style="color:#f59e0b;margin-top:32px">🎇 浏阳花炮 — 世界烟花之乡</h2>
+        <h2 style="color:#f59e0b;margin-top:32px">🔧 技术架构</h2>
         <p>
-          天河落系统的设计灵感来源于中国湖南<strong>浏阳</strong>——世界著名的<strong>烟花之乡</strong>。
-          浏阳花炮产业拥有超过1400年的历史，是全球最大的烟花生产基地。
-        </p>
-        <p>
-          <strong>浏阳花炮产业</strong>年产值达<strong>508.9亿元</strong>，拥有431家规模以上企业和3721项烟花相关专利。
-          在<strong>文化创意</strong>赋能背景下，浏阳正从传统花炮制造向数字化、智能化转型，
-          天河落正是服务于这一转型的数字化工具——让烟花秀设计从经验驱动走向<strong>数据驱动</strong>。
-        </p>
-        <p>
-          从北京奥运会到国庆70周年，从浏阳国际烟花大赛到全球各地的"天空剧院"，
-          专业烟花编排系统正成为花炮产业<strong>价值提升</strong>的关键路径。
+          前端：React 19 + TypeScript + Vite 6 + Tailwind + React Router<br/>
+          后端：Cloudflare Pages Functions + D1 数据库<br/>
+          数据管线：阿里云 ECS 上 RSSHub + Python 抓取脚本 + systemd timer 日更<br/>
+          分发：Cloudflare 全球 CDN + Cloudflared Tunnel
         </p>
 
         <h2 style="color:#f59e0b;margin-top:32px">🔗 相关链接</h2>
         <ul style="padding-left:20px">
-          <li><a href="/demo/" style="color:#60a5fa">在线演示</a> — 直接体验烟花3D模拟器</li>
-          <li><a href="/about/" style="color:#60a5fa">关于天河落</a> — 项目背景与技术架构</li>
-          <li><a href="/features/" style="color:#60a5fa">功能介绍</a> — 3D烟花模拟、AI编排、阵地管理详解</li>
-          <li><a href="/liuyang/" style="color:#60a5fa">浏阳花炮</a> — 世界烟花之都的千年传承与数字化转型</li>
-          <li><a href="https://github.com/H8DIDI/tianheluo" style="color:#60a5fa">GitHub 开源仓库</a> — 完整源代码与技术文档</li>
+          <li><a href="/" style="color:#60a5fa">首页 · 视频墙</a></li>
+          <li><a href="/chain" style="color:#60a5fa">产业链</a></li>
+          <li><a href="/news" style="color:#60a5fa">最新资讯</a></li>
+          <li><a href="/data" style="color:#60a5fa">产业数据</a></li>
+          <li><a href="/tools" style="color:#60a5fa">工具集</a></li>
+          <li><a href="/tools/simulator" style="color:#60a5fa">3D 烟花编排模拟器</a></li>
+          <li><a href="https://github.com/H8DIDI/tianheluo" style="color:#60a5fa">GitHub 开源仓库</a></li>
         </ul>
 
         <h2 style="color:#f59e0b;margin-top:32px">📮 联系</h2>
@@ -177,15 +150,14 @@
         <img src="/email.svg" alt="联系邮箱" width="280" height="36" style="display:block;margin:8px 0"/>
 
         <p style="margin-top:32px;color:#666;font-size:0.9em">
-          关键词：烟花燃放控制系统 | 花炮编排软件 | 浏阳烟花 | fireworks show control | pyrotechnics choreography | 3D fireworks simulation
+          关键词：浏阳花炮 | 花炮产业 | 烟花之乡 | 烟花秀 | fireworks | pyrotechnics | 3D fireworks | industry observation
         </p>
       </div>
     </div>
     <noscript>
-      <div style="padding:40px;text-align:center;background:#1a1a2e;color:#e0e0e0;min-height:100vh">
-        <h1>🎆 天河落 — 专业烟花燃放控制与3D编排系统</h1>
-        <p>天河落是基于 React + Three.js 的烟花燃放控制系统，需要启用 JavaScript 才能使用。</p>
-        <p>功能包括：3D实时烟花预览、800管阵地编排、AI智能编排、多种烟花效果模拟。</p>
+      <div style="padding:40px;text-align:center;background:#05050a;color:#e0e0e0;min-height:100vh">
+        <h1>🎆 天河落 — 浏阳花炮产业聚合站</h1>
+        <p>需要启用 JavaScript 才能访问完整站点。</p>
         <p><a href="https://github.com/H8DIDI/tianheluo" style="color:#60a5fa">查看 GitHub 源代码</a></p>
       </div>
     </noscript>

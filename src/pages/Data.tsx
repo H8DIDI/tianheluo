@@ -1,15 +1,49 @@
-const stats = [
-  { label: '产业年产值', value: '508.9', unit: '亿元', note: '2024 年数据' },
-  { label: '规上企业数', value: '431', unit: '家', note: '浏阳片区' },
-  { label: '相关专利', value: '3721', unit: '项', note: '近十年累计' },
-  { label: '出口国家', value: '100+', unit: '国', note: '常年稳定' },
-];
+import { useEffect, useState } from 'react';
 
-const companies = [
-  { name: '待接入', type: '规上企业', location: '浏阳', status: '数据源配置中' },
-];
+type Stats = {
+  videos: number;
+  news: number;
+  sources: number;
+  last_fetch_at: number | null;
+  industry: {
+    annual_output: string;
+    annual_output_unit: string;
+    above_scale_companies: number;
+    patents: number;
+    export_countries: string;
+  };
+};
 
 export default function Data() {
+  const [stats, setStats] = useState<Stats | null>(null);
+
+  useEffect(() => {
+    fetch('/api/stats')
+      .then((r) => r.json())
+      .then(setStats)
+      .catch(() => {});
+  }, []);
+
+  const industry = stats?.industry;
+  const kpis = [
+    { label: '产业年产值', value: industry?.annual_output ?? '508.9', unit: industry?.annual_output_unit ?? '亿元', note: '2024 年数据' },
+    { label: '规上企业数', value: String(industry?.above_scale_companies ?? 431), unit: '家', note: '浏阳片区' },
+    { label: '相关专利', value: String(industry?.patents ?? 3721), unit: '项', note: '近十年累计' },
+    { label: '出口国家', value: industry?.export_countries ?? '100+', unit: '国', note: '常年稳定' },
+  ];
+
+  const pipeline = [
+    { label: '抓取视频', value: stats?.videos ?? '—' },
+    { label: '抓取资讯', value: stats?.news ?? '—' },
+    { label: '启用信源', value: stats?.sources ?? '—' },
+    {
+      label: '最近拉取',
+      value: stats?.last_fetch_at
+        ? new Date(stats.last_fetch_at * 1000).toLocaleString('zh-CN', { hour12: false })
+        : '—',
+    },
+  ];
+
   return (
     <div className="space-y-8">
       <section>
@@ -20,23 +54,38 @@ export default function Data() {
         </p>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
-            <div className="text-xs text-neutral-500">{s.label}</div>
-            <div className="mt-1 flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-amber-300">{s.value}</span>
-              <span className="text-sm text-neutral-400">{s.unit}</span>
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-amber-300">产业指标</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {kpis.map((s) => (
+            <div key={s.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
+              <div className="text-xs text-neutral-500">{s.label}</div>
+              <div className="mt-1 flex items-baseline gap-1">
+                <span className="text-2xl font-bold text-amber-300">{s.value}</span>
+                <span className="text-sm text-neutral-400">{s.unit}</span>
+              </div>
+              <div className="mt-1 text-[11px] text-neutral-600">{s.note}</div>
             </div>
-            <div className="mt-1 text-[11px] text-neutral-600">{s.note}</div>
-          </div>
-        ))}
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-neutral-300">数据管线运行状态</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {pipeline.map((p) => (
+            <div key={p.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
+              <div className="text-xs text-neutral-500">{p.label}</div>
+              <div className="mt-1 text-lg font-semibold text-neutral-100">{p.value}</div>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section>
         <div className="mb-3 flex items-end justify-between">
           <h2 className="text-lg font-semibold">企业名录</h2>
-          <span className="text-xs text-neutral-500">占位 · API 接入后生效</span>
+          <span className="text-xs text-neutral-500">占位 · 政府公开数据源接入中</span>
         </div>
         <div className="overflow-hidden rounded-lg border border-white/10">
           <table className="w-full text-sm">
@@ -49,21 +98,14 @@ export default function Data() {
               </tr>
             </thead>
             <tbody>
-              {companies.map((c, i) => (
-                <tr key={i} className="border-t border-white/5 text-neutral-300">
-                  <td className="px-4 py-2">{c.name}</td>
-                  <td className="px-4 py-2 text-neutral-400">{c.type}</td>
-                  <td className="px-4 py-2 text-neutral-400">{c.location}</td>
-                  <td className="px-4 py-2 text-neutral-500">{c.status}</td>
-                </tr>
-              ))}
+              <tr className="border-t border-white/5 text-neutral-300">
+                <td colSpan={4} className="px-4 py-4 text-center text-neutral-500">
+                  API 对接后将展示规上企业、资质、出口能力等信息
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
-        <p className="mt-3 text-xs text-neutral-500">
-          规划：接入政府公开数据（浏阳市工信局公示、工信部企业名录）+ 商业 API（天眼查/企查查），
-          展示公司主营、资质、出口国、近期动态。
-        </p>
       </section>
     </div>
   );
