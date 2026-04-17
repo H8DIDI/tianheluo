@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap');
 
 * {
   margin: 0;
@@ -9,7 +9,7 @@
 
 html, body {
   height: 100%;
-  background-color: #000;
+  background-color: #0A0A0F;
   color: #fff;
 }
 
@@ -28,72 +28,113 @@ body {
   font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-/* Global: tighter heading letter-spacing like Vercel */
 h1, h2, h3 {
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+  letter-spacing: -0.028em;
+  line-height: 1.05;
 }
 
-/* Scrollbars */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
 
 ::selection {
-  background: rgba(245, 158, 11, 0.35);
+  background: rgba(236, 72, 153, 0.4);
   color: #fff;
 }
 
-/* Simulator fullscreen */
 .simulator-root {
   width: 100vw;
   height: 100dvh;
   overflow: hidden;
 }
 
-/* Animated gradient border (for hero pills) */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+/* === VIBRANT MESH GRADIENT HERO === */
+.mesh-hero {
+  background-color: #0A0A0F;
+  background-image:
+    radial-gradient(at 12% 18%, rgba(251, 191, 36, 0.22) 0px, transparent 45%),
+    radial-gradient(at 78% 22%, rgba(236, 72, 153, 0.26) 0px, transparent 50%),
+    radial-gradient(at 25% 85%, rgba(139, 92, 246, 0.24) 0px, transparent 55%),
+    radial-gradient(at 85% 75%, rgba(34, 211, 238, 0.18) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(255, 110, 80, 0.12) 0px, transparent 60%);
 }
-.hero-gradient-text {
-  background: linear-gradient(90deg, #fff 0%, #fff 45%, #f59e0b 55%, #fff 65%, #fff 100%);
-  background-size: 200% 100%;
+
+/* Animated aurora on hover-ready elements */
+@keyframes aurora-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.aurora-text {
+  background: linear-gradient(120deg, #fbbf24 0%, #ec4899 30%, #8b5cf6 55%, #22d3ee 80%, #fbbf24 100%);
+  background-size: 300% 300%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer 8s ease-in-out infinite;
+  animation: aurora-shift 12s ease-in-out infinite;
 }
 
-/* Grid lines background (Vercel-style) */
-.grid-bg {
+/* Grid overlay for extra depth */
+.grid-overlay {
   background-image:
-    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%);
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 40%, transparent 100%);
+}
+
+/* Noise/grain texture for organic feel */
+.noise-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.8'/></svg>");
+}
+
+/* Colored glowing ring button */
+.glow-btn {
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 10px 30px -10px rgba(236, 72, 153, 0.5),
+    0 0 40px -12px rgba(139, 92, 246, 0.4);
+}
+
+/* Gradient borders */
+.gradient-border {
+  background:
+    linear-gradient(#14141b, #14141b) padding-box,
+    linear-gradient(135deg, #fbbf24, #ec4899, #8b5cf6) border-box;
+  border: 1px solid transparent;
 }
 
 /* Focus ring */
 :focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid #ec4899;
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
-/* Utility */
 .label-caps {
   font-family: 'Geist Mono', ui-monospace, monospace;
   font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .number-display {
   font-family: 'Geist Mono', ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
+
+/* Slow pulse for live dots */
+@keyframes soft-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+.soft-pulse { animation: soft-pulse 2.4s ease-in-out infinite; }
