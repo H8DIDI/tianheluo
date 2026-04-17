@@ -1,10 +1,10 @@
 <p align="center">
-  <h1 align="center">🎆 萤合落 · Fireworks Control System</h1>
+  <h1 align="center">🎆 天河落 · Fireworks Control System</h1>
   <p align="center">
     <strong>从千年火药到数字编排 —— 专业级烟花燃放控制系统</strong>
   </p>
   <p align="center">
-    <a href="https://yingheluo.dpdns.org/">🌐 在线体验</a> ·
+    <a href="https://tianheluo.com/">🌐 在线体验</a> ·
     <a href="#-快速开始">🚀 快速开始</a> ·
     <a href="#-项目架构">📐 架构</a> ·
     <a href="#-部署指南">☁️ 部署</a>
@@ -231,7 +231,7 @@ $$\text{Ti} + \text{O}_2 \rightarrow \text{TiO}_2 + \text{银色火花拉尾}$$
 
 ## 🏮 浏阳花炮：世界烟花之都
 
-萤合落项目根植于浏阳花炮千年传承的土壤之上。
+天河落项目根植于浏阳花炮千年传承的土壤之上。
 
 ### 千年烟火
 
@@ -262,17 +262,17 @@ $$\text{Ti} + \text{O}_2 \rightarrow \text{TiO}_2 + \text{银色火花拉尾}$$
 - **故宫灵感**（2026）：受榫卯结构启发的免胶卡锁式烟花量产
 - **W49 无硫还原剂**（2024）：SO₂ 零排放，绿色烟花破局
 
-> *"我们的烟花是工业品，不是文化产品。"* —— 黄成。萤合落想要助力解决的正是这一点：**用数字技术赋能烟花创意设计与编排。**
+> *"我们的烟花是工业品，不是文化产品。"* —— 黄成。天河落想要助力解决的正是这一点：**用数字技术赋能烟花创意设计与编排。**
 
 ---
 
 ## 🎯 项目介绍
 
-**萤合落 (YingHeLuo)** 是一个专业级烟花燃放控制与编排系统，提供从 **阵地布局 → 炮架管理 → 时间轴编排 → 3D 模拟预览 → 施工单导出** 的完整工作流，集成 AI 助手实现自然语言生成燃放方案。
+**天河落 (YingHeLuo)** 是一个专业级烟花燃放控制与编排系统，提供从 **阵地布局 → 炮架管理 → 时间轴编排 → 3D 模拟预览 → 施工单导出** 的完整工作流，集成 AI 助手实现自然语言生成燃放方案。
 
 ### 🌐 在线体验
 
-👉 **[https://yingheluo.dpdns.org/](https://yingheluo.dpdns.org/)**
+👉 **[https://tianheluo.com/](https://tianheluo.com/)**
 
 无需安装，浏览器打开即用。
 
@@ -281,7 +281,7 @@ $$\text{Ti} + \text{O}_2 \rightarrow \text{TiO}_2 + \text{银色火花拉尾}$$
 ## 📐 项目架构
 
 ```
-萤合落 v3.0
+天河落 v3.0
 ├── 前端 (React 19 + TypeScript + Vite 6)
 │   ├── 🗺️ 二维地图编辑器 ─── 阵地/炮架可视化布局
 │   ├── 🎬 3D 烟花模拟器 ──── Three.js + R3F 实时渲染
@@ -328,8 +328,8 @@ $$\text{Ti} + \text{O}_2 \rightarrow \text{TiO}_2 + \text{银色火花拉尾}$$
 ### 本地开发
 
 ```bash
-git clone https://github.com/H8DIDI/yingheluo-v3.git
-cd yingheluo-v3
+git clone https://github.com/H8DIDI/tianheluo.git
+cd tianheluo
 npm install
 npm run dev
 ```
@@ -355,9 +355,9 @@ npm run dev
 3. 创建 D1 数据库并执行迁移：
 
 ```bash
-wrangler d1 create yingheluo-v3
-wrangler d1 execute yingheluo-v3 --file=migrations/0001_init.sql
-wrangler d1 execute yingheluo-v3 --file=migrations/0002_create_chat_log.sql
+wrangler d1 create tianheluo
+wrangler d1 execute tianheluo --file=migrations/0001_init.sql
+wrangler d1 execute tianheluo --file=migrations/0002_create_chat_log.sql
 ```
 
 4. 修改 `wrangler.toml` 中的 `database_id` → 部署 → 绑定域名
@@ -403,5 +403,5 @@ wrangler d1 execute yingheluo-v3 --file=migrations/0002_create_chat_log.sql
 <p align="center">
   <strong>🎆 让每一场烟花秀都完美绽放</strong>
   <br>
-  <sub>萤合落 · YingHeLuo — 从千年火药到数字编排</sub>
+  <sub>天河落 · YingHeLuo — 从千年火药到数字编排</sub>
 </p>

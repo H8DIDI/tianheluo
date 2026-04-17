@@ -1,14 +1,14 @@
-# CLAUDE.md - 萤合落 (Yingheluo) 烟花项目
+# CLAUDE.md - 天河落 (Tianheluo) 烟花项目
 
 ## 🎯 使命
-把萤合落打造成 GitHub 上最有趣的电子烟花模拟器。核心目标：**让人一打开就想玩，玩了就停不下来**。
+把天河落打造成 GitHub 上最有趣的电子烟花模拟器。核心目标：**让人一打开就想玩，玩了就停不下来**。
 
 ## 📐 技术栈
 - React 19 + TypeScript + Vite 6
 - Three.js + @react-three/fiber + @react-three/drei + postprocessing
 - Zustand 状态管理
 - TailwindCSS 4
-- 部署在 Cloudflare Pages (https://yingheluo.dpdns.org/)
+- 部署在 Cloudflare Pages (https://tianheluo.com/)
 
 ## 🔥 当前最大问题（按优先级）
 

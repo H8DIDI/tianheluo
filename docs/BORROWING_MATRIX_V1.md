@@ -1,6 +1,6 @@
-# 萤合落全项目借鉴矩阵 V1
+# 天河落全项目借鉴矩阵 V1
 
-本文档用于把 `yingheluo-v3` 的每个核心功能域映射到可借鉴的高星 GitHub 项目，优先选择 `500+ stars` 的项目。映射分为三类：
+本文档用于把 `tianheluo` 的每个核心功能域映射到可借鉴的高星 GitHub 项目，优先选择 `500+ stars` 的项目。映射分为三类：
 
 - `direct dependency`：适合直接接入
 - `implementation reference`：适合照着结构和交互重写

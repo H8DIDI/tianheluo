@@ -300,7 +300,7 @@ export async function exportToPDF(project: Project): Promise<void> {
     pdf.setFontSize(8);
     pdf.setTextColor(150);
     pdf.text(
-      `第 ${i} / ${totalPages} 页 | 萤合落 V1.0 烟花控制系统`,
+      `第 ${i} / ${totalPages} 页 | 天河落 V1.0 烟花控制系统`,
       pageWidth / 2,
       pageHeight - 10,
       { align: 'center' }

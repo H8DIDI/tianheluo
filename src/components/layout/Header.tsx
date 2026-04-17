@@ -81,7 +81,7 @@ export function Header({ onOpenManager, onOpenAdmin, onOpenAssistant, mobile = f
     <header className={`flex-shrink-0 bg-app-bg border-b border-panel-border flex items-center justify-between gap-3 ${mobile ? 'px-3 py-2' : 'min-h-[56px] px-4'}`}>
       <div className="flex items-center gap-3 min-w-0 overflow-hidden">
         <div className="min-w-0">
-          <h1 className={`${mobile ? 'text-base' : 'text-xl'} font-bold text-text-main tracking-tight truncate`}>萤合落 V1.0</h1>
+          <h1 className={`${mobile ? 'text-base' : 'text-xl'} font-bold text-text-main tracking-tight truncate`}>天河落 V1.0</h1>
           {mobile && <div className="text-[11px] text-text-secondary truncate">手机预演模式</div>}
         </div>
         <span className={`${mobile ? 'hidden' : 'inline-flex'} text-sm text-text-secondary px-3 py-1 bg-panel-bg rounded border border-panel-border`}>
